@@ -1,3 +1,4 @@
+import { theme } from '@/constants/Theme';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -5,11 +6,10 @@ import {
   PaperProvider,
 } from 'react-native-paper';
 import 'react-native-reanimated';
-import { theme } from '../constants/Theme';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
 
   if (!loaded) {
@@ -21,6 +21,7 @@ export default function RootLayout() {
     <PaperProvider theme={theme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="screen" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </PaperProvider>

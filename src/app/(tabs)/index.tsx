@@ -1,25 +1,33 @@
-import { Image, StyleSheet, View } from "react-native";
-import { Appbar, Avatar, Button, Card, Text } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useTab } from '@/hooks/zustand/useTab';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { router } from 'expo-router';
+import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Appbar, Avatar, Badge, Button, Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 
 const EmployeeInfo = () => {
+  const { colors } = useTheme();
+  const setIndex = useTab((state) => state.setIndex);
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       {/* Header */}
       <Appbar.Header mode="center-aligned">
         <Image
-          source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/5/5e/EVN_logo.png" }}
-          style={{ width: 40, height: 40, resizeMode: "contain", marginLeft: 8 }}
+          source={require("@/assets/images/splash-icon.png")}
+          style={{ width: 80, height: 80, resizeMode: "contain", marginLeft: 20 }}
         />
         <Appbar.Content title="" />
-        <Appbar.Action icon="bell-outline" onPress={() => { }} />
+        <View style={{ flexDirection: "row" }}>
+          <Appbar.Action icon="bell-outline" onPress={() => router.navigate("/screen/notifications")} />
+          <Badge size={8} style={{ position: "absolute", top: 10, right: 10 }} />
+        </View>
+
         <Appbar.Action icon="cog-outline" onPress={() => { }} />
       </Appbar.Header>
 
       {/* Avatar + Name */}
       <View style={styles.profile}>
         <Avatar.Image
-          size={80}
+          size={150}
           source={{ uri: "https://i.pravatar.cc/150?img=3" }}
         />
         <Text style={styles.name}>Trần Việt Cường</Text>
@@ -27,40 +35,56 @@ const EmployeeInfo = () => {
 
       {/* Info Cards */}
       <View style={styles.row}>
-        <Card style={styles.card}>
+        <Card style={{ backgroundColor: colors.surfaceVariant }}>
           <Card.Content>
-            <Text variant="labelMedium">Chức danh</Text>
+            <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+              <Avatar.Icon icon={"account"} style={{ backgroundColor: colors.background }} color={colors.primary} size={24} />
+              <Text variant="titleSmall">Chức danh</Text>
+            </View>
             <Text variant="bodyMedium">Công nhân Sửa chữa Tuabin</Text>
           </Card.Content>
         </Card>
-        <Card style={styles.card}>
+        <Card style={{ backgroundColor: colors.surfaceVariant }}>
           <Card.Content>
-            <Text variant="labelMedium">Bậc thợ</Text>
+            <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+              <Avatar.Icon icon={"star"} style={{ backgroundColor: colors.background }} color={colors.primary} size={24} />
+              <Text variant="titleSmall">Bậc thợ</Text>
+            </View>
             <Text variant="bodyMedium">6/7</Text>
           </Card.Content>
         </Card>
       </View>
 
       <View style={styles.actions}>
-        <Button mode="outlined" icon="chart-bar">
+        <Button mode="outlined" icon="chart-bar" onPress={() => router.navigate("/screen/history-exams")}>
           Lịch sử nâng bậc
         </Button>
-        <Button mode="text" icon="chevron-right">
+        <Button mode="text" icon="arrow-right" contentStyle={{ flexDirection: "row-reverse" }} onPress={() => router.navigate("/screen/employee-profile")}>
           Chi Tiết
         </Button>
       </View>
-
+      <Divider />
       {/* Activity */}
-      <Text style={styles.sectionTitle}>Hoạt Động</Text>
+      <View style={{ flexDirection: "row", gap: 5, alignItems: "center", paddingHorizontal: 15, marginTop: 10 }}>
+        <Icon source={"timer"} size={24} color={colors.primary} />
+        <Text variant="titleMedium">Hoạt Động</Text>
+      </View>
       <Card style={styles.activityCard}>
-        <Card.Content>
-          <Text variant="titleMedium">Thi Nâng Bậc - Đợt 2/2025</Text>
-          <Text variant="bodyMedium" style={{ marginTop: 4 }}>
-            Bạn chưa xác nhận tham gia thi. Vui lòng thực hiện xác nhận trước thời gian quy định.
-          </Text>
+        <Card.Content style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+          <Pressable style={(pressed) => [{ opacity: pressed ? 0.7 : 1, flexDirection: "row", alignItems: "center", paddingRight: 10 }]}
+            onPress={() => setIndex(1)}
+          >
+            <View>
+              <Text variant="titleMedium">Thi Nâng Bậc - Đợt 2/2025</Text>
+              <Text variant="bodyMedium" style={{ marginTop: 4 }}>
+                Bạn chưa xác nhận tham gia thi. Vui lòng thực hiện xác nhận trước thời gian quy định.
+              </Text>
+            </View>
+            <Icon source={() => <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />} size={24} />
+          </Pressable>
         </Card.Content>
       </Card>
-    </SafeAreaView>
+    </>
   );
 }
 
@@ -72,20 +96,15 @@ const styles = StyleSheet.create({
   name: { marginTop: 8, fontSize: 18, fontWeight: "600" },
   row: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
+    gap: 20,
     marginTop: 16,
-  },
-  card: {
-    flex: 1,
-    marginHorizontal: 8,
-    backgroundColor: "#E6F4F1",
-    borderRadius: 12,
   },
   actions: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 16,
-    marginTop: 12,
+    marginVertical: 20,
   },
   sectionTitle: {
     marginTop: 24,

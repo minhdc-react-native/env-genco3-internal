@@ -1,0 +1,68 @@
+import { useTab } from "@/hooks/zustand/useTab";
+import { router } from "expo-router";
+import * as React from "react";
+import { StyleSheet, View } from "react-native";
+import { Appbar, Button, TextInput } from "react-native-paper";
+
+export default function PostponeExam() {
+    const [reason, setReason] = React.useState("");
+    const setRegister = useTab((state) => state.setRegister);
+    return (
+        <View style={styles.container}>
+            {/* Appbar */}
+            <Appbar.Header>
+                <Appbar.BackAction onPress={() => router.back()} />
+                <Appbar.Content title="Hoãn Thi" />
+            </Appbar.Header>
+
+            {/* Nội dung */}
+            <View style={styles.content}>
+                <TextInput
+                    label="Lý Do"
+                    placeholder="Vì sao bạn hoãn thi?"
+                    mode="outlined"
+                    value={reason}
+                    multiline={true}
+                    onChangeText={setReason}
+                    style={styles.input}
+                />
+            </View>
+
+            {/* Nút xác nhận */}
+            <View style={styles.footer}>
+                <Button
+                    mode="contained"
+                    onPress={() => {
+                        setRegister("Postpone");
+                        router.back();
+                    }}
+                    style={styles.confirmButton}
+                >
+                    Xác Nhận Hoãn Thi
+                </Button>
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#F5FAFA",
+    },
+    content: {
+        padding: 16,
+    },
+    input: {
+        backgroundColor: "#fff",
+        height: 200
+    },
+    footer: {
+        padding: 16,
+    },
+    confirmButton: {
+        backgroundColor: "#B71C1C",
+        marginHorizontal: 50,
+        marginBottom: 50
+    },
+});

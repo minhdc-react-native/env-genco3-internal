@@ -1,136 +1,174 @@
-import * as React from "react";
-import { Image, StyleSheet, View } from "react-native";
-import {
-    Appbar,
-    Button,
-    Text
-} from "react-native-paper";
-
+import VcSelector from "@/components/vcSelector";
+import { useTab } from "@/hooks/zustand/useTab";
+import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
+import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { Appbar, Button, Card, Divider, IconButton, Text, useTheme } from "react-native-paper";
+interface IItem {
+    id: string | number;
+    value: string;
+}
+const tabs: IItem[] = [
+    { id: 'current', value: 'Hiện tại' }, { id: 'history', value: 'Lịch sử' }
+];
 const RegisterExams = () => {
-    const [index, setIndex] = React.useState(0);
-    const [routes] = React.useState([
-        { key: "current", title: "Hiện Tại" },
-        { key: "history", title: "Lịch Sử" },
-    ]);
+    const { colors } = useTheme();
 
-    const renderScene = ({ route }: any) => {
-        switch (route.key) {
-            case "current":
-                return <CurrentTab />;
-            case "history":
-                return (
-                    <View style={styles.center}>
-                        <Text>Lịch sử các đợt thi</Text>
-                    </View>
-                );
-            default:
-                return null;
-        }
-    };
+    const [currentTab, setCurrentTab] = useState<IItem>(tabs[0]);
+    return (
+        <>
+            <Appbar.Header>
+                <Appbar.Content title="Đăng ký bài thi" />
+                <IconButton icon={"help"} size={24} iconColor={colors.primary} onPress={() => router.navigate("/screen/guide-exam")} />
+            </Appbar.Header>
+            <VcSelector data={tabs} value={currentTab.id} onChange={(value) => setCurrentTab(value)} />
+            <Divider />
+            <View style={{ flex: 1 }}>
+                {currentTab.id === "current" ? <CurrentRoute /> : <History />}
+            </View>
+        </>
+    );
+}
 
+export default RegisterExams;
+
+const CurrentRoute = () => {
+    const register = useTab((state) => state.register);
+    const { colors } = useTheme();
     return (
         <View style={styles.container}>
-            {/* Header */}
-            <Appbar.Header mode="center-aligned">
-                <Appbar.Content title="Đăng Ký Bài Thi" />
-                <Appbar.Action icon="help-circle-outline" onPress={() => { }} />
-            </Appbar.Header>
-
-            {/* Tabs */}
-            <TabView
-                navigationState={{ index, routes }}
-                renderScene={renderScene}
-                onIndexChange={setIndex}
-                renderTabBar={(props) => (
-                    <TabBar
-                        {...props}
-                        indicatorStyle={{ backgroundColor: "#00796B" }}
-                        style={{ backgroundColor: "#fff" }}
-                        inactiveColor="#555"
-                        activeColor="#00796B"
-                    />
-                )}
-            />
-        </View>
-    );
-};
-
-const CurrentTab = () => {
-    return (
-        <View style={styles.content}>
-            {/* Illustration */}
+            {/* ảnh minh hoạ */}
             <Image
-                source={{ uri: "https://cdn-icons-png.flaticon.com/512/942/942748.png" }}
-                style={{ width: 120, height: 120, alignSelf: "center", marginVertical: 16 }}
+                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/942/942748.png' }}
+                style={{ width: 120, height: 120, marginBottom: 16 }}
+                resizeMode="contain"
             />
-
-            {/* Title */}
-            <Text style={styles.title}>Thi Nâng Bậc - Đợt 2/2025</Text>
-            <Text style={styles.subtitle}>Đăng Ký Tham Gia</Text>
-
-            {/* Description */}
-            <Text style={styles.description}>
+            <Text variant="titleMedium" style={styles.title}>
+                Thi Nâng Bậc - Đợt 2/2025
+            </Text>
+            <Text variant="bodyMedium" style={{ color: '#00796B', marginBottom: 8 }}>
+                Đăng Ký Tham Gia
+            </Text>
+            <Text variant="bodyMedium" style={styles.textCenter}>
                 Bạn nằm trong danh sách thi nâng bậc đợt tháng 9/2025, vui lòng xác nhận
                 đăng ký tham gia trước thời hạn.
             </Text>
-
-            {/* Time */}
-            <View style={styles.timeRow}>
-                <Appbar.Action icon="calendar" />
-                <Text style={styles.timeText}>Thời Gian: 03/09/2025 - 05/09/2025</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
+                <IconButton icon="calendar" size={20} />
+                <Text>Thời Gian: 03/09/2025 - 05/09/2025</Text>
             </View>
+            {register === "notRegister" ? <>
+                <Button
+                    mode="contained"
+                    style={styles.registerBtn}
+                    onPress={() => router.navigate("/screen/employee-register-exam")}
+                >
+                    Đăng Ký Thi
+                </Button>
 
-            {/* Buttons */}
-            <Button
-                mode="contained"
-                style={styles.primaryBtn}
-                onPress={() => console.log("Đăng ký thi")}
+                <Button
+                    onPress={() => router.navigate("/screen/postpone-exam")}
+                    textColor="red"
+                    style={{ marginTop: 8 }}
+                >
+                    Hoãn Thi?
+                </Button>
+            </> : <Button
+                mode="outlined"
+                style={styles.registerBtn}
+                // contentStyle={{ flexDirection: "row-reverse" }}
+                icon={() => (register === "Registered" ? <AntDesign name="checkcircle" size={24} color={colors.primary} /> : <AntDesign name="closecircle" size={24} color="red" />)}
             >
-                Đăng Ký Thi
-            </Button>
-            <Button
-                mode="text"
-                textColor="red"
-                onPress={() => console.log("Hoãn thi")}
-            >
-                Hoãn Thi?
-            </Button>
+                <Text style={{ color: register === "Registered" ? colors.primary : 'red', fontWeight: "bold" }}>{register === "Registered" ? "Đã đăng ký tham gia" : "Đã hoãn thi"}</Text>
+            </Button>}
+
         </View>
     );
 };
+type IExam = {
+    id: string;
+    title: string;
+    date: string;
+    status: string;
+};
+const DATA: IExam[] = [
+    { id: '1', title: 'Thi giữ bậc - T1/2024', date: '10/01/2024', status: 'Đạt' },
+    { id: '2', title: 'Thi nâng bậc - T2/2024', date: '01/02/2024', status: 'Trượt' },
+    { id: '3', title: 'Thi giữ bậc - T3/2024', date: '10/03/2024', status: 'Đạt' },
+];
 
+const History = () => {
+    const renderItem = ({ item }: { item: IExam }) => (
+        <Card style={styles.cardItem} mode="contained">
+            <Pressable style={(pressed) => [{ opacity: pressed ? 0.7 : 1 }, styles.row]} onPress={() => router.navigate("/screen/exam-detail")}>
+                <View style={{ flex: 1 }}>
+                    <Text variant="titleMedium" style={styles.titleItem}>{item.title}</Text>
+                    <Text variant="bodySmall" style={{ color: '#666' }}>Ngày thi: {item.date}</Text>
+                </View>
+                <Text style={[styles.status, item.status === "Trượt" && { color: 'red' }]}>{item.status}</Text>
+                <IconButton icon="chevron-right" size={20} />
+            </Pressable>
+        </Card>
+    );
+
+    return (
+        <View style={{ flex: 1 }}>
+            <FlatList
+                data={DATA}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ padding: 12 }}
+                ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            />
+        </View>
+    );
+}
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#f9f9f9" },
-    content: { flex: 1, padding: 16 },
-    title: { fontSize: 18, fontWeight: "700", textAlign: "center", marginTop: 8 },
-    subtitle: {
-        fontSize: 15,
-        fontWeight: "600",
-        color: "#00796B",
-        textAlign: "center",
-        marginBottom: 12,
-    },
-    description: {
-        fontSize: 14,
-        textAlign: "center",
-        color: "#555",
-        marginHorizontal: 16,
-        marginBottom: 16,
-    },
-    timeRow: {
-        flexDirection: "row",
-        alignItems: "center",
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#F5FAFA',
         justifyContent: "center",
-        marginBottom: 24,
+        alignItems: "center",
+        paddingHorizontal: 20
     },
-    timeText: { fontSize: 14, color: "#333" },
-    primaryBtn: {
-        borderRadius: 50,
-        marginHorizontal: 32,
-        paddingVertical: 6,
-        backgroundColor: "#00796B",
+    card: {
+        padding: 12,
+        borderRadius: 12,
     },
-    center: { flex: 1, alignItems: "center", justifyContent: "center" },
+    cardItem: {
+        backgroundColor: '#EDEFEF',
+        borderRadius: 12,
+        padding: 12,
+    },
+    titleItem: {
+        marginBottom: 4,
+        fontWeight: '500',
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginBottom: 4,
+        textAlign: 'center',
+    },
+    textCenter: {
+        textAlign: 'center',
+        marginBottom: 12,
+        color: '#555',
+    },
+    registerBtn: {
+        marginTop: 16,
+        borderRadius: 25,
+        width: '100%',
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    status: {
+        color: 'green',
+        fontWeight: '600',
+        marginRight: 4,
+    },
 });
-
-export default RegisterExams;
