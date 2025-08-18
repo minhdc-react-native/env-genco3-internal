@@ -1,12 +1,17 @@
 import { useTab } from '@/hooks/zustand/useTab';
+import { epsStorage } from '@/utils/epsStorage';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Avatar, Badge, Button, Card, Divider, Icon, Text, useTheme } from "react-native-paper";
-
+const { clearTokens } = epsStorage();
 const EmployeeInfo = () => {
   const { colors } = useTheme();
   const setIndex = useTab((state) => state.setIndex);
+  const logout = async () => {
+    await clearTokens();
+    router.replace("/(auth)/login");
+  }
   return (
     <>
       {/* Header */}
@@ -21,15 +26,17 @@ const EmployeeInfo = () => {
           <Badge size={8} style={{ position: "absolute", top: 10, right: 10 }} />
         </View>
 
-        <Appbar.Action icon="cog-outline" onPress={() => { }} />
+        <Appbar.Action icon="logout" onPress={logout} />
       </Appbar.Header>
 
       {/* Avatar + Name */}
-      <View style={styles.profile}>
-        <Avatar.Image
-          size={150}
-          source={{ uri: "https://i.pravatar.cc/150?img=3" }}
-        />
+      <View style={[styles.profile]}>
+        <View style={[{ borderWidth: 5, borderRadius: 150, borderColor: colors.primary }]}>
+          <Avatar.Image
+            size={150}
+            source={{ uri: "http://125.212.225.203:7024/media/avatars/300-2.png" }}
+          />
+        </View>
         <Text style={styles.name}>Trần Việt Cường</Text>
       </View>
 

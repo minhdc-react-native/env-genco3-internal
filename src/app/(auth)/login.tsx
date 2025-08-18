@@ -1,0 +1,164 @@
+import { useToast } from "@/components/dialog/useToast";
+import FormWrapper from "@/components/formWrapper";
+import VcCheckBox from "@/components/vcCheckbox";
+import { useAuth } from "@/hooks/useAuth";
+import { zRequiredString } from "@/utils/checkZod";
+import { epsStorage } from "@/utils/epsStorage";
+import * as React from "react";
+import { Image, StyleSheet, View } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import * as z from "zod";
+const { getLogin } = epsStorage();
+const zod = z.object({
+    userName: zRequiredString('Nhập tên'),
+    password: zRequiredString('Nhập mật khẩu')
+});
+
+export default function Login() {
+    const { colors } = useTheme();
+    const [secureText, setSecureText] = React.useState(true);
+    const [loginInfo, setLoginInfo] = React.useState<ILogin>({ userName: '', password: '', remember: false });
+    const { showToast } = useToast();
+    const { login } = useAuth();
+    const onLogin = () => {
+        try {
+            zod.parse(loginInfo);
+            login(loginInfo);
+        } catch (err) {
+            if (err instanceof z.ZodError) {
+                const messages = err.issues.map((issue: any) => issue.message);
+                const errorMessage = messages.join("\n");
+                showToast(errorMessage, { type: "error" });
+            }
+        }
+    }
+    React.useEffect(() => {
+        const _getLoginInfo = async () => {
+            const _login = await getLogin();
+            if (_login) setLoginInfo(_login);
+        }
+        _getLoginInfo();
+    }, [])
+    return (
+        <FormWrapper style={{ flex: 1, justifyContent: 'flex-end', padding: 20 }}>
+            {/* Logo + tiêu đề */}
+            <View style={styles.header}>
+                <Image
+                    source={require("@/assets/images/icon.png")}
+                    style={styles.logo}
+                />
+                <Text variant="titleLarge" style={{ color: "#0000AA", fontWeight: "bold" }}>ENV<Text style={{ color: '#FF0000', fontWeight: "bold" }}>GENCO3</Text></Text>
+                <Text style={[styles.subTitle, { color: colors.primary }]}>CÔNG TY DỊCH VỤ SỬA CHỮA CÁC NHÀ MÁY ĐIỆN</Text>
+            </View>
+
+            {/* Form đăng nhập */}
+            <View style={styles.form}>
+                <Text style={styles.title}>Đăng Nhập</Text>
+
+                {/* EPS SSO */}
+                <Button mode="outlined" style={styles.ssoButton}>
+                    EPS SSO
+                </Button>
+
+                <Text style={styles.or}>HOẶC</Text>
+
+                <TextInput
+                    label="Tên Đăng Nhập"
+                    value={loginInfo.userName}
+                    onChangeText={(value) => setLoginInfo(prev => ({ ...prev, userName: value }))}
+                    mode="outlined"
+                    style={styles.input}
+                />
+
+                <TextInput
+                    label="Mật Khẩu"
+                    value={loginInfo.password}
+                    onChangeText={(value) => setLoginInfo(prev => ({ ...prev, password: value }))}
+                    secureTextEntry={secureText}
+                    mode="outlined"
+                    style={styles.input}
+                    right={<TextInput.Icon icon={secureText ? "eye" : "eye-off"} onPress={() => setSecureText(!secureText)} />}
+                />
+
+                {/* Ghi nhớ + Quên mật khẩu */}
+                <View style={styles.row}>
+                    <VcCheckBox label="Ghi nhớ tôi"
+                        value={loginInfo.remember}
+                        onChange={(value) => setLoginInfo(prev => ({ ...prev, remember: (typeof value === "boolean" ? value : value === "C") }))}
+                        type="switch"
+                    />
+                    <Button onPress={() => { }}>Quên Mật Khẩu?</Button>
+                </View>
+
+                {/* Nút đăng nhập */}
+                <Button mode="contained" onPress={onLogin}>
+                    Đăng nhập
+                </Button>
+            </View>
+        </FormWrapper>
+    );
+}
+
+const styles = StyleSheet.create({
+    header: {
+        alignItems: "center",
+        marginBottom: 20
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        marginBottom: 10,
+    },
+    company: {
+        fontSize: 22,
+        fontWeight: "bold"
+    },
+    subTitle: {
+        fontSize: 14,
+        textAlign: "center"
+    },
+    form: {
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        padding: 20,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 3,
+        marginVertical: 20
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 16,
+        textAlign: "center",
+    },
+    ssoButton: {
+        marginBottom: 12,
+    },
+    or: {
+        textAlign: "center",
+        marginVertical: 8,
+        color: "#666",
+    },
+    input: {
+        marginBottom: 12,
+        backgroundColor: "#fff",
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    rememberRow: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    rememberText: {
+        fontSize: 14,
+    },
+    forgot: {
+        fontSize: 14
+    }
+});

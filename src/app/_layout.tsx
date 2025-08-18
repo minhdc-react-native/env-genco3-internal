@@ -2,10 +2,14 @@ import { theme } from '@/constants/Theme';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   PaperProvider,
 } from 'react-native-paper';
 import 'react-native-reanimated';
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { LoadingProvider } from '../components/dialog/loadingProvider';
+import { PopupProvider } from '../components/dialog/popupProvider';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -18,12 +22,22 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="screen" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </PaperProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <RootSiblingParent>
+        <PopupProvider >
+          <LoadingProvider>
+            <PaperProvider theme={theme}>
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="screen" options={{ headerShown: false }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </PaperProvider>
+          </LoadingProvider>
+        </PopupProvider>
+      </RootSiblingParent>
+    </GestureHandlerRootView>
   );
 }
