@@ -10,14 +10,13 @@ export default function ExamDetail() {
             {/* Appbar */}
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
-                <Appbar.Content title="Chi tiết kỳ thi" />
+                {/* <Appbar.Content title="Chi tiết kỳ thi" /> */}
             </Appbar.Header>
-
-            <ScrollView contentContainerStyle={{ padding: 16 }}>
+            <Text variant="titleLarge" style={{ fontWeight: '600', marginBottom: 4, marginHorizontal: 20 }}>
+                Thi giữ bậc - T3/2024
+            </Text>
+            <ScrollView contentContainerStyle={{ padding: 16 }} stickyHeaderIndices={[2]}>
                 {/* Tiêu đề kỳ thi */}
-                <Text variant="titleLarge" style={{ fontWeight: '600', marginBottom: 4 }}>
-                    Thi giữ bậc - T3/2024
-                </Text>
                 <Text variant="bodyMedium" style={{ color: 'gray', marginBottom: 16 }}>
                     Ngày thi: 05/04/2024
                 </Text>
@@ -39,11 +38,62 @@ export default function ExamDetail() {
                 </View>
 
                 {/* Chi tiết */}
-                <View style={styles.sectionHeader}>
-                    <Icon source={"format-list-text"} size={24} color={colors.primary} />
-                    <Text style={styles.sectionTitle}>Chi tiết</Text>
+                <View>
+                    <View style={[styles.sectionHeader, { backgroundColor: colors.background, paddingHorizontal: 10 }]}>
+                        <Icon source={"format-list-text"} size={24} color={colors.primary} />
+                        <Text style={styles.sectionTitle}>Chi tiết</Text>
+                    </View>
                 </View>
-
+                {/* Thông tin chi tiết */}
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Họ và tên</Text>
+                    <Text style={styles.value}>Trần Việt Cường</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Mã nhân viên</Text>
+                    <Text style={styles.value}>EPS-0072</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Chức danh</Text>
+                    <Text style={styles.value}>Công nhân Sửa chữa Tuabin</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Phân xưởng</Text>
+                    <Text style={styles.value}>I/PXSC CƠ-NHIỆT PHÚ MỸ</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Bậc thợ hiện tại</Text>
+                    <Text style={styles.value}>6/7</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Bậc thợ thi</Text>
+                    <Text style={styles.value}>6/7</Text>
+                </View>
+                {/* Thông tin chi tiết */}
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Họ và tên</Text>
+                    <Text style={styles.value}>Trần Việt Cường</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Mã nhân viên</Text>
+                    <Text style={styles.value}>EPS-0072</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Chức danh</Text>
+                    <Text style={styles.value}>Công nhân Sửa chữa Tuabin</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Phân xưởng</Text>
+                    <Text style={styles.value}>I/PXSC CƠ-NHIỆT PHÚ MỸ</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Bậc thợ hiện tại</Text>
+                    <Text style={styles.value}>6/7</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.label}>Bậc thợ thi</Text>
+                    <Text style={styles.value}>6/7</Text>
+                </View>
                 {/* Thông tin chi tiết */}
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Họ và tên</Text>
