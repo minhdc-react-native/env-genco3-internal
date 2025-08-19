@@ -2,9 +2,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Appbar, Card, Text } from "react-native-paper";
+import { Appbar, Card, Text, useTheme } from "react-native-paper";
 
 export default function GuideExam() {
+    const { colors } = useTheme();
     const items = [
         {
             id: 1,
@@ -27,7 +28,7 @@ export default function GuideExam() {
     ];
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#F5FAFA" }}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
             {/* Appbar */}
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
@@ -38,14 +39,14 @@ export default function GuideExam() {
             <View style={{ padding: 16 }}>
                 {items.map((item) => (
                     <TouchableOpacity key={item.id} style={{ marginBottom: 12 }}>
-                        <Card style={styles.card}>
+                        <Card style={[styles.card, { backgroundColor: colors.elevation.level1 }]}>
                             <Card.Content style={styles.cardContent}>
                                 {/* Icon */}
                                 <View style={styles.iconContainer}>
                                     <MaterialCommunityIcons
                                         name={item.icon as any}
                                         size={22}
-                                        color="#007A7A"
+                                        color={colors.primary}
                                     />
                                 </View>
 
@@ -72,7 +73,6 @@ export default function GuideExam() {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#EDEFEF",
         borderRadius: 16,
     },
     cardContent: {
@@ -86,8 +86,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: "center",
         alignItems: "center",
-        marginRight: 12,
-        backgroundColor: "#F0F7F7",
+        marginRight: 12
     },
     subtitle: {
         fontSize: 12,

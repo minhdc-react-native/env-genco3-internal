@@ -16,6 +16,11 @@ const RegisterExams = () => {
     const { colors } = useTheme();
 
     const [currentTab, setCurrentTab] = useState<IItem>(tabs[0]);
+
+    // useFocusEffect(() => {
+    //     setCurrentTab(tabs[0]);
+    // });
+
     return (
         <>
             <Appbar.Header>
@@ -37,8 +42,7 @@ const CurrentRoute = () => {
     const register = useTab((state) => state.register);
     const { colors } = useTheme();
     return (
-        <View style={styles.container}>
-            {/* ảnh minh hoạ */}
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Image
                 source={{ uri: 'https://cdn-icons-png.flaticon.com/512/942/942748.png' }}
                 style={{ width: 120, height: 120, marginBottom: 16 }}
@@ -47,7 +51,7 @@ const CurrentRoute = () => {
             <Text variant="titleMedium" style={styles.title}>
                 Thi Nâng Bậc - Đợt 2/2025
             </Text>
-            <Text variant="bodyMedium" style={{ color: '#00796B', marginBottom: 8 }}>
+            <Text variant="bodyMedium" style={{ color: colors.primary, marginBottom: 8 }}>
                 Đăng Ký Tham Gia
             </Text>
             <Text variant="bodyMedium" style={styles.textCenter}>
@@ -99,8 +103,9 @@ const DATA: IExam[] = [
 ];
 
 const History = () => {
+    const { colors } = useTheme();
     const renderItem = ({ item }: { item: IExam }) => (
-        <Card style={styles.cardItem} mode="contained">
+        <Card style={[styles.cardItem, { backgroundColor: colors.elevation.level1 }]} mode="contained">
             <Pressable style={(pressed) => [{ opacity: pressed ? 0.7 : 1 }, styles.row]} onPress={() => router.navigate("/screen/exam-detail")}>
                 <View style={{ flex: 1 }}>
                     <Text variant="titleMedium" style={styles.titleItem}>{item.title}</Text>
@@ -128,7 +133,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#F5FAFA',
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 20
@@ -138,7 +142,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     cardItem: {
-        backgroundColor: '#EDEFEF',
         borderRadius: 12,
         padding: 12,
     },

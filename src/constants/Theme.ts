@@ -52,11 +52,60 @@ const ThemeCustomize = {
     onSurfaceDisabled: 'rgba(25, 28, 28, 0.38)',
     backdrop: 'rgba(42, 50, 50, 0.4)',
 }
+const ThemeEvnGenco3 = {
+    primary: "#0000AA",
+    onPrimary: "#FFFFFF",
+    primaryContainer: "#D0D0FF",
+    onPrimaryContainer: "#00006E",
+
+    secondary: "#565680",
+    onSecondary: "#FFFFFF",
+    secondaryContainer: "#DDE0FF",
+    onSecondaryContainer: "#12134A",
+
+    tertiary: "#006494",
+    onTertiary: "#FFFFFF",
+    tertiaryContainer: "#CBE6FF",
+    onTertiaryContainer: "#001E30",
+    error: "#BA1A1A",
+    onError: "#FFFFFF",
+    errorContainer: "#FFDAD6",
+    onErrorContainer: "#410002",
+
+    background: "#FDFCFF",
+    onBackground: "#1B1B21",
+    surface: "#FDFCFF",
+    onSurface: "#1B1B21",
+
+    surfaceVariant: "#E2E0F0",
+    onSurfaceVariant: "#454559",
+    outline: "#767680",
+    outlineVariant: "#C6C5D0",
+
+    shadow: "#000000",
+    scrim: "#000000",
+    inverseSurface: "#2F3035",
+    inverseOnSurface: "#F2F0F7",
+    inversePrimary: "#A9A9FF",
+
+    elevation: {
+        level0: "transparent",
+        level1: "#F0F0FF",
+        level2: "#E6E6FF",
+        level3: "#DDDDFF",
+        level4: "#D9D9FF",
+        level5: "#D3D3FF",
+    },
+
+    surfaceDisabled: "rgba(27, 27, 33, 0.12)",
+    onSurfaceDisabled: "rgba(27, 27, 33, 0.38)",
+    backdrop: "rgba(41, 41, 70, 0.4)",
+}
 
 export const theme = {
     ...DefaultTheme,
     colors: {
         ...DefaultTheme.colors,
-        ...ThemeCustomize
+        ...ThemeEvnGenco3
     },
 };

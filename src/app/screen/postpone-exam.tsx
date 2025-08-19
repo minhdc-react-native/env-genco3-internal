@@ -2,13 +2,14 @@ import { useTab } from "@/hooks/zustand/useTab";
 import { router } from "expo-router";
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Appbar, Button, TextInput } from "react-native-paper";
+import { Appbar, Button, TextInput, useTheme } from "react-native-paper";
 
 export default function PostponeExam() {
     const [reason, setReason] = React.useState("");
+    const { colors } = useTheme();
     const setRegister = useTab((state) => state.setRegister);
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Appbar */}
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
@@ -48,7 +49,6 @@ export default function PostponeExam() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F5FAFA",
     },
     content: {
         padding: 16,

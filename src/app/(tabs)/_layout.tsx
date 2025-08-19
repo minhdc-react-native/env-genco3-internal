@@ -6,15 +6,13 @@ import ManageTraining from './manage-training';
 import RegisterExams from './register-exams';
 
 export default function TabLayout() {
-  // const [index, setIndex] = React.useState(0);
-
   const index = useTab((state) => state.index);
   const setIndex = useTab((state) => state.setIndex);
 
   const [routes] = React.useState([
-    { key: 'index', title: 'Thông tin', focusedIcon: 'account-check', unfocusedIcon: 'account-check-outline' },
-    { key: 'register-exams', title: 'Đợt thi', focusedIcon: 'calendar-multiple' },
-    { key: 'manage-training', title: 'Đào tạo', focusedIcon: 'book-open-page-variant', unfocusedIcon: 'book-open-page-variant-outline' }
+    { key: 'index', title: 'Thông tin NV', focusedIcon: 'account-check', unfocusedIcon: 'account-check-outline' },
+    { key: 'register-exams', title: 'Đăng ký đợt thi', focusedIcon: 'calendar-multiple' },
+    { key: 'manage-training', title: 'Quản lý đào tạo', focusedIcon: 'book-open-page-variant', unfocusedIcon: 'book-open-page-variant-outline' }
   ]);
   const renderScene = BottomNavigation.SceneMap({
     index: EmployeeInfo,

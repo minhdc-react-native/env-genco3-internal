@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "evn-genco3-internal",
-    "slug": "evn-genco3-internal",
+    "name": "EPS TRAINING",
+    "slug": "eps-training",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "evngenco3internal",
+    "scheme": "eps-training",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.evngenco3internal"
+      "bundleIdentifier": "com.evn.eps.training"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.evngenco3internal"
+      "package": "com.evn.eps.training"
     },
     "web": {
       "bundler": "metro",

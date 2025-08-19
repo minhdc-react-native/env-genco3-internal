@@ -37,18 +37,17 @@ const handleError = async (err: any) => {
         }
 
         isRefreshing = true;
-
         try {
             const token = await getToken();
             if (!token) throw new Error('No refresh token');
 
             const data = qs.stringify({
-                grant_type: 'refresh_token',
+                // grant_type: 'refresh_token',
                 refresh_token: token.refresh_token,
-                client_id: 'VacomMartApi_App'
+                // client_id: 'VacomMartApi_App'
             });
             const baseURL = BASE_URL;
-            const response = await axios.post(`${baseURL}/connect/token`, data, {
+            const response = await axios.post(`${baseURL}/auth/refresh-token`, data, {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             });
 

@@ -8,6 +8,7 @@ import * as React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as z from "zod";
+const sizeLogo = { width: 874, height: 537 }
 const { getLogin } = epsStorage();
 const zod = z.object({
     userName: zRequiredString('Nhập tên'),
@@ -44,10 +45,10 @@ export default function Login() {
             {/* Logo + tiêu đề */}
             <View style={styles.header}>
                 <Image
-                    source={require("@/assets/images/icon.png")}
-                    style={styles.logo}
+                    source={require("@/assets/images/splash-icon.png")}
+                    style={[{ width: 1 / 4 * sizeLogo.width, height: 1 / 4 * sizeLogo.height, resizeMode: "cover", marginVertical: 20 }]}
                 />
-                <Text variant="titleLarge" style={{ color: "#0000AA", fontWeight: "bold" }}>ENV<Text style={{ color: '#FF0000', fontWeight: "bold" }}>GENCO3</Text></Text>
+                {/* <Text variant="titleLarge" style={{ color: "#0000AA", fontWeight: "bold" }}>ENV<Text style={{ color: '#FF0000', fontWeight: "bold" }}>GENCO3</Text></Text> */}
                 <Text style={[styles.subTitle, { color: colors.primary }]}>CÔNG TY DỊCH VỤ SỬA CHỮA CÁC NHÀ MÁY ĐIỆN</Text>
             </View>
 
@@ -67,6 +68,7 @@ export default function Login() {
                     value={loginInfo.userName}
                     onChangeText={(value) => setLoginInfo(prev => ({ ...prev, userName: value }))}
                     mode="outlined"
+                    left={<TextInput.Icon icon={"account"} color={colors.onErrorContainer} />}
                     style={styles.input}
                 />
 
@@ -77,6 +79,7 @@ export default function Login() {
                     secureTextEntry={secureText}
                     mode="outlined"
                     style={styles.input}
+                    left={<TextInput.Icon icon={"key-chain-variant"} color={colors.onErrorContainer} />}
                     right={<TextInput.Icon icon={secureText ? "eye" : "eye-off"} onPress={() => setSecureText(!secureText)} />}
                 />
 
@@ -103,11 +106,6 @@ const styles = StyleSheet.create({
     header: {
         alignItems: "center",
         marginBottom: 20
-    },
-    logo: {
-        width: 100,
-        height: 100,
-        marginBottom: 10,
     },
     company: {
         fontSize: 22,

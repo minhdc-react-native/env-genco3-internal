@@ -3,12 +3,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, Button, Divider, Text } from "react-native-paper";
+import { Appbar, Button, Divider, Text, useTheme } from "react-native-paper";
 
 export default function EmployeeRegister() {
     const setRegister = useTab((state) => state.setRegister);
+    const { colors } = useTheme();
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Appbar */}
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
@@ -27,14 +28,14 @@ export default function EmployeeRegister() {
                     <MaterialCommunityIcons
                         name="text-box-outline"
                         size={20}
-                        color="#007A7A"
+                        color={colors.primary}
                     />
                     <Text style={styles.sectionHeaderText}> Thông tin dự thi</Text>
                 </View>
                 <Divider />
 
                 {/* Thông tin chi tiết */}
-                <View style={styles.infoBox}>
+                <View style={[styles.infoBox, { backgroundColor: colors.elevation.level1 }]}>
                     <View style={styles.row}>
                         <Text style={styles.label}>Loại thi</Text>
                         <Text style={styles.value}>Nâng bậc</Text>
@@ -77,7 +78,6 @@ export default function EmployeeRegister() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F5FAFA",
         marginBottom: 50
     },
     content: {
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     infoBox: {
-        backgroundColor: "#EDF1F1",
         borderRadius: 8,
         padding: 12,
     },

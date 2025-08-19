@@ -6,7 +6,7 @@ import { Appbar, Card, Icon, Text, useTheme } from 'react-native-paper';
 export default function ExamDetail() {
     const { colors } = useTheme();
     return (
-        <View style={{ flex: 1, backgroundColor: '#F5FAFA' }}>
+        <View style={{ flex: 1, backgroundColor: colors.background }}>
             {/* Appbar */}
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
@@ -22,7 +22,7 @@ export default function ExamDetail() {
                 </Text>
 
                 {/* Box kết quả */}
-                <View style={styles.resultRow}>
+                <View style={[styles.resultRow, { backgroundColor: colors.background }]}>
                     <Card style={styles.resultCard}>
                         <Card.Content style={{ alignItems: 'center' }}>
                             <Text style={styles.resultLabel}>Điểm TB</Text>
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     resultCard: {
         flex: 1,
         marginHorizontal: 4,
-        backgroundColor: '#EDEFEF',
         borderRadius: 12,
     },
     resultLabel: {

@@ -1,9 +1,14 @@
+import { useHelper } from "@/hooks/useHelper";
+import { useData } from "@/hooks/zustand/useData";
 import { router } from "expo-router";
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, Text } from "react-native-paper";
+import { Appbar, Avatar, Card, Text, useTheme } from "react-native-paper";
 
 export default function EmployeeProfile() {
+    const user = useData((state) => state.user);
+    const { colors } = useTheme();
+    const { formatDate } = useHelper();
     return (
         <>
             {/* Appbar */}
@@ -11,19 +16,30 @@ export default function EmployeeProfile() {
                 <Appbar.BackAction onPress={() => router.back()} />
                 <Appbar.Content title="Hồ sơ nhân viên" />
             </Appbar.Header>
-
             {/* Nội dung */}
-            <ScrollView style={styles.container}>
-                <Field label="Mã nhân viên" value="EPS-0072" />
-                <Field label="Họ và tên" value="Trần Việt Cường" />
-                <Field label="Chuyên môn" value="Sửa chữa Tuabin" />
-                <Field label="Chức danh" value="Công nhân" />
-                <Field label="Bậc hiện tại" value="6/7" />
-                <Field label="Phân xưởng" value="I/PXSC CƠ-NHIỆT PHÚ MỸ" />
-                <Field label="Thâm niên" value="20 năm 1 tháng" />
-                <Field label="Bảng lương" value="A1.1.2" />
-                <Field label="Hệ số lương hiện tại" value="3.971" />
-                <Field label="Ngày hưởng lương" value="01/07/2024" />
+            <ScrollView style={[styles.container, { backgroundColor: colors.elevation.level1 }]}>
+                <View style={{ alignItems: "center", marginBottom: 20, flexDirection: "row", gap: 50 }}>
+                    <View style={[{ borderWidth: 2, borderRadius: 100, borderColor: colors.primary }]}>
+                        <Avatar.Image
+                            size={100}
+                            source={{ uri: user?.imageUrl || "http://125.212.225.203:7024/media/avatars/300-2.png" }}
+                        />
+                    </View>
+                    <View>
+                        <Field label="Mã nhân viên" value={user?.code ?? ''} />
+                        <Field label="Ngày sinh" value={formatDate(user?.birthDate, "dd/MM/yyyy HH:mm:ss", true)} />
+                    </View>
+                </View>
+                <Card style={{ padding: 20, backgroundColor: colors.background }}>
+                    <Field label="Họ và tên" value={user?.fullName ?? ''} />
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <Field label="Hợp đồng" value={user?.contract ?? ''} />
+                        <Field label="Ngày ký" value={formatDate(user?.contractSignedDate, "dd/MM/yyyy HH:mm:ss", true)} />
+                    </View>
+                    <Field label="Bậc hiện tại" value={`${user?.currentRank}/${user?.rankScale}`} />
+                    <Field label="Chức danh" value={user?.positionName ?? ''} />
+                    <Field label="Phòng ban" value={user?.departmentName ?? ''} />
+                </Card>
             </ScrollView>
         </>
     );
@@ -41,7 +57,6 @@ function Field({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f5f9f8",
         padding: 16,
     },
     field: {

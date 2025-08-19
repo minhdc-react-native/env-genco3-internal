@@ -1,24 +1,25 @@
+import { StarRating } from '@/components/starRating';
+import { useAuth } from '@/hooks/useAuth';
+import { useData } from '@/hooks/zustand/useData';
 import { useTab } from '@/hooks/zustand/useTab';
-import { epsStorage } from '@/utils/epsStorage';
+import { AntDesign } from '@expo/vector-icons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Avatar, Badge, Button, Card, Divider, Icon, Text, useTheme } from "react-native-paper";
-const { clearTokens } = epsStorage();
+const sizeLogo = { width: 874, height: 537 }
 const EmployeeInfo = () => {
   const { colors } = useTheme();
   const setIndex = useTab((state) => state.setIndex);
-  const logout = async () => {
-    await clearTokens();
-    router.replace("/(auth)/login");
-  }
+  const user = useData((state) => state.user);
+  const { logout } = useAuth();
   return (
     <>
       {/* Header */}
       <Appbar.Header mode="center-aligned">
         <Image
           source={require("@/assets/images/splash-icon.png")}
-          style={{ width: 80, height: 80, resizeMode: "contain", marginLeft: 20 }}
+          style={{ width: 1 / 10 * sizeLogo.width, height: 1 / 10 * sizeLogo.height, resizeMode: "cover", marginLeft: 20 }}
         />
         <Appbar.Content title="" />
         <View style={{ flexDirection: "row" }}>
@@ -26,38 +27,38 @@ const EmployeeInfo = () => {
           <Badge size={8} style={{ position: "absolute", top: 10, right: 10 }} />
         </View>
 
-        <Appbar.Action icon="logout" onPress={logout} />
+        <Appbar.Action icon={() => <AntDesign name="logout" size={24} color={colors.primary} />} onPress={logout} />
       </Appbar.Header>
 
       {/* Avatar + Name */}
       <View style={[styles.profile]}>
         <View style={[{ borderWidth: 5, borderRadius: 150, borderColor: colors.primary }]}>
           <Avatar.Image
-            size={150}
-            source={{ uri: "http://125.212.225.203:7024/media/avatars/300-2.png" }}
+            size={200}
+            source={{ uri: user?.imageUrl || "http://125.212.225.203:7024/media/avatars/300-2.png" }}
           />
         </View>
-        <Text style={styles.name}>Trần Việt Cường</Text>
+        <Text variant='headlineMedium'>{user?.fullName}</Text>
       </View>
 
       {/* Info Cards */}
       <View style={styles.row}>
-        <Card style={{ backgroundColor: colors.surfaceVariant }}>
+        <Card style={{ backgroundColor: colors.elevation.level2, flex: 1 }}>
           <Card.Content>
-            <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+            <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginBottom: 10 }}>
               <Avatar.Icon icon={"account"} style={{ backgroundColor: colors.background }} color={colors.primary} size={24} />
               <Text variant="titleSmall">Chức danh</Text>
             </View>
-            <Text variant="bodyMedium">Công nhân Sửa chữa Tuabin</Text>
+            <Text variant="bodyMedium" style={{ fontWeight: "bold", color: colors.onErrorContainer }}>{user?.positionName}</Text>
           </Card.Content>
         </Card>
-        <Card style={{ backgroundColor: colors.surfaceVariant }}>
+        <Card style={{ backgroundColor: colors.elevation.level2 }}>
           <Card.Content>
-            <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+            <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginBottom: 10 }}>
               <Avatar.Icon icon={"star"} style={{ backgroundColor: colors.background }} color={colors.primary} size={24} />
-              <Text variant="titleSmall">Bậc thợ</Text>
+              <Text variant="titleSmall">Bậc thợ <Text style={{ fontWeight: "bold", color: colors.onErrorContainer }}>{`${user?.currentRank}/${user?.rankScale}`}</Text></Text>
             </View>
-            <Text variant="bodyMedium">6/7</Text>
+            <StarRating value={user?.currentRank ?? 0} max={user?.rankScale} />
           </Card.Content>
         </Card>
       </View>
@@ -67,7 +68,7 @@ const EmployeeInfo = () => {
           Lịch sử nâng bậc
         </Button>
         <Button mode="text" icon="arrow-right" contentStyle={{ flexDirection: "row-reverse" }} onPress={() => router.navigate("/screen/employee-profile")}>
-          Chi Tiết
+          Chi tiết hồ sơ
         </Button>
       </View>
       <Divider />
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 20,
     marginTop: 16,
+    marginHorizontal: 20
   },
   actions: {
     flexDirection: "row",

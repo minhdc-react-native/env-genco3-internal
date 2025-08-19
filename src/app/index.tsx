@@ -1,10 +1,14 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Redirect } from "expo-router";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import PieLoader from "../components/dialog/pieLoader";
 
 export default function AppScreen() {
-    const { isLogin } = useAuth();
+    const { isLogin, checkLogin } = useAuth();
+    useEffect(() => {
+        checkLogin();
+    }, [])
     if (isLogin === null) {
         return <View style={styles.overlay}>
             <PieLoader />

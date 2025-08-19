@@ -11,8 +11,11 @@ declare global {
     }
     interface IUser {
         id: string;
+        code: string;
         userName: string;
         fullName: string;
+        contract: string;
+        contractSignedDate: string;
         gender: number;
         birthDate: string;
         imageUrl: string;
@@ -20,5 +23,7 @@ declare global {
         positionName: string;
         departmentName: string;
         teamName: string;
+        currentRank: number;
+        rankScale: number
     }
 }

@@ -1,12 +1,13 @@
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function NotificationDetail() {
+    const { colors } = useTheme();
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Header */}
             <View style={styles.header}>
                 <IconButton
@@ -33,10 +34,9 @@ export default function NotificationDetail() {
 
             {/* Button */}
             <Button
-                mode="contained"
+                mode="contained-tonal"
                 style={styles.button}
                 labelStyle={{ color: "#000", fontWeight: "bold" }}
-                buttonColor="#D0EAE8"
                 onPress={() => console.log("Xem Chi Tiết")}
             >
                 Xem Chi Tiết
@@ -48,7 +48,6 @@ export default function NotificationDetail() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F6FAFA",
         padding: 16,
     },
     header: {

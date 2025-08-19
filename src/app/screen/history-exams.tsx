@@ -63,7 +63,6 @@ export default function HistoryExams() {
         <View style={styles.row}>
             {/* Timeline Dot */}
             <View style={styles.timeline}>
-                {/* <View style={styles.circle} /> */}
                 <Icon source={() => <MaterialIcons name="radio-button-checked" size={24} color={colors.primary} />} size={20} />
                 <View style={styles.line} />
             </View>
@@ -81,7 +80,7 @@ export default function HistoryExams() {
                 </Text>
 
                 {item.oldValue && item.newValue && (
-                    <View style={styles.box}>
+                    <View style={[styles.box, { backgroundColor: colors.elevation.level1 }]}>
                         <View style={styles.boxItem}>
                             <Text style={styles.label}>Cũ</Text>
                             <Text style={styles.value}>{item.oldValue}</Text>
@@ -157,14 +156,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: 30,
     },
-    circle: {
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        borderWidth: 2,
-        borderColor: "#00796B",
-        backgroundColor: "#fff",
-    },
     line: {
         flex: 1,
         width: 2,
@@ -186,7 +177,6 @@ const styles = StyleSheet.create({
     box: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#F1F3F4",
         borderRadius: 10,
         padding: 10,
         marginTop: 6,
