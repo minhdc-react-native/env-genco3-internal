@@ -38,7 +38,7 @@ export default function GuideExam() {
             {/* Danh sách các mục */}
             <View style={{ padding: 16 }}>
                 {items.map((item) => (
-                    <TouchableOpacity key={item.id} style={{ marginBottom: 12 }}>
+                    <TouchableOpacity key={item.id} style={{ marginBottom: 12 }} onPress={() => router.navigate("/screen/guide-exam-detail")}>
                         <Card style={[styles.card, { backgroundColor: colors.elevation.level1 }]}>
                             <Card.Content style={styles.cardContent}>
                                 {/* Icon */}

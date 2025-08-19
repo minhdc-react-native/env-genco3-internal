@@ -19,6 +19,7 @@ interface PopupContentProps {
     onClose?: () => void;
     showView?: React.ReactNode | (() => React.ReactNode);
     timeExit?: number;
+    color?: string;
 }
 
 type PopupContextType = {

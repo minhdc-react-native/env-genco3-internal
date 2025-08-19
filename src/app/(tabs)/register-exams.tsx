@@ -14,23 +14,19 @@ const tabs: IItem[] = [
 ];
 const RegisterExams = () => {
     const { colors } = useTheme();
-
+    const register = useTab((state) => state.register);
     const [currentTab, setCurrentTab] = useState<IItem>(tabs[0]);
-
-    // useFocusEffect(() => {
-    //     setCurrentTab(tabs[0]);
-    // });
 
     return (
         <>
             <Appbar.Header>
                 <Appbar.Content title="Đăng ký bài thi" />
-                <IconButton icon={"help"} size={24} iconColor={colors.primary} onPress={() => router.navigate("/screen/guide-exam")} />
+                <IconButton mode="contained-tonal" icon={"help"} size={24} iconColor={colors.primary} onPress={() => router.navigate("/screen/guide-exam")} />
             </Appbar.Header>
             <VcSelector data={tabs} value={currentTab.id} onChange={(value) => setCurrentTab(value)} />
             <Divider />
             <View style={{ flex: 1 }}>
-                {currentTab.id === "current" ? <CurrentRoute /> : <History />}
+                {currentTab.id === "current" ? (register === "Registered" ? <CurrentRouteTopic /> : <CurrentRoute />) : <History />}
             </View>
         </>
     );
@@ -44,7 +40,7 @@ const CurrentRoute = () => {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Image
-                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/942/942748.png' }}
+                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/17791/17791849.png' }}
                 style={{ width: 120, height: 120, marginBottom: 16 }}
                 resizeMode="contain"
             />
@@ -78,15 +74,70 @@ const CurrentRoute = () => {
                 >
                     Hoãn Thi?
                 </Button>
-            </> : <Button
-                mode="outlined"
-                style={styles.registerBtn}
-                // contentStyle={{ flexDirection: "row-reverse" }}
-                icon={() => (register === "Registered" ? <AntDesign name="checkcircle" size={24} color={colors.primary} /> : <AntDesign name="closecircle" size={24} color="red" />)}
-            >
-                <Text style={{ color: register === "Registered" ? colors.primary : 'red', fontWeight: "bold" }}>{register === "Registered" ? "Đã đăng ký tham gia" : "Đã hoãn thi"}</Text>
-            </Button>}
+            </> :
+                <Card mode="elevated" style={{ backgroundColor: colors.background, paddingHorizontal: 20, paddingBottom: 20 }}>
+                    <Button
+                        style={styles.registerBtn}
+                        icon={() => (<AntDesign name="close" size={24} color="red" />)}
+                    >
+                        <Text style={{ color: 'red', fontWeight: "bold" }}>{"Đã hoãn thi"}</Text>
+                    </Button>
+                    <Text variant="bodyMedium" style={[styles.textCenter, { marginTop: 10 }]}>{"Lý do hoãn thi: tôi bận công việc đi...."}</Text>
+                </Card>
+            }
 
+        </View>
+    );
+};
+const CurrentRouteTopic = () => {
+    const registerTopic = useTab((state) => state.registerTopic);
+    const { colors } = useTheme();
+    return (
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <Image
+                source={{ uri: registerTopic === "notRegister" ? 'https://cdn-icons-png.flaticon.com/512/2666/2666505.png' : 'https://cdn-icons-png.flaticon.com/512/18295/18295118.png' }}
+                style={{ width: 120, height: 120, marginBottom: 16 }}
+                resizeMode="contain"
+            />
+            <Text variant="titleMedium" style={styles.title}>
+                Thi Nâng Bậc - Đợt 2/2025
+            </Text>
+            <Text variant="bodyMedium" style={{ color: colors.primary, marginBottom: 8 }}>
+                {registerTopic === "notRegister" ? 'Đăng Ký Đề tài' : 'Hoàn thành đăng ký'}
+            </Text>
+            <Text variant="bodyMedium" style={styles.textCenter}>
+                {registerTopic === "notRegister" ? 'Vui lòng đăng ký đề tài dự thị trong thời gian quy định.' :
+                    'Bạn hãy theo dõi thông báo về kỳ thi bạn đã đăng ký!'}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
+                <IconButton icon="calendar" size={20} />
+                <Text>{registerTopic === "notRegister" ? 'Thời Gian: 01/10/2025 - 05/10/2025' : 'Lịch thi: 10/10/2025'}</Text>
+            </View>
+            <View style={{ gap: 10 }}>
+                <Button
+                    icon={() => <AntDesign name="check" size={24} color={colors.primary} />}
+                >
+                    Đã đăng ký tham gia
+                </Button>
+                {registerTopic === "notRegister" ? <Button
+                    mode="contained"
+                    onPress={() => router.navigate("/screen/register-topic")}
+                >
+                    Đăng đề tài dự thi
+                </Button> : <Button
+                    icon={() => <AntDesign name="check" size={24} color={colors.primary} />}
+                >
+                    Đã đăng ký đề tài
+                </Button>}
+            </View>
+
+            <Button
+                onPress={() => router.navigate("/screen/contest-info")}
+                style={{ marginTop: 8 }}
+                mode="contained-tonal"
+            >
+                Thông tin dự thi
+            </Button>
         </View>
     );
 };
@@ -157,7 +208,6 @@ const styles = StyleSheet.create({
     },
     textCenter: {
         textAlign: 'center',
-        marginBottom: 12,
         color: '#555',
     },
     registerBtn: {

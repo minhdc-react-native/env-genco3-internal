@@ -1,3 +1,4 @@
+import { usePopup } from "@/components/dialog/popupProvider";
 import { useTab } from "@/hooks/zustand/useTab";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -7,6 +8,7 @@ import { Appbar, Button, Divider, Text, useTheme } from "react-native-paper";
 
 export default function EmployeeRegister() {
     const setRegister = useTab((state) => state.setRegister);
+    const { showPopup } = usePopup();
     const { colors } = useTheme();
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -63,8 +65,19 @@ export default function EmployeeRegister() {
                 <Button
                     mode="contained"
                     onPress={() => {
-                        setRegister("Registered");
-                        router.back();
+                        showPopup({
+                            message: 'Bạn có xác nhận tham gia kỳ thi này?',
+                            showCancel: true,
+                            cancelText: "Không",
+                            confirmText: "Có tham gia",
+                            onConfirm: () => {
+                                setRegister("Registered");
+                                router.back();
+                            },
+                            iconType: "question",
+                            color: colors.primary
+                        })
+
                     }}
                     style={{ marginHorizontal: 50 }}
                 >

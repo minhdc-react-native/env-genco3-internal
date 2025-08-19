@@ -1,3 +1,4 @@
+import { StarRating } from "@/components/starRating";
 import { useHelper } from "@/hooks/useHelper";
 import { useData } from "@/hooks/zustand/useData";
 import { router } from "expo-router";
@@ -36,7 +37,10 @@ export default function EmployeeProfile() {
                         <Field label="Hợp đồng" value={user?.contract ?? ''} />
                         <Field label="Ngày ký" value={formatDate(user?.contractSignedDate, "dd/MM/yyyy HH:mm:ss", true)} />
                     </View>
-                    <Field label="Bậc hiện tại" value={`${user?.currentRank}/${user?.rankScale}`} />
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <Field label="Bậc hiện tại" value={`${user?.currentRank}/${user?.rankScale}`} />
+                        <StarRating value={user?.currentRank ?? 0} max={user?.rankScale ?? 0} />
+                    </View>
                     <Field label="Chức danh" value={user?.positionName ?? ''} />
                     <Field label="Phòng ban" value={user?.departmentName ?? ''} />
                 </Card>

@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import * as React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { Appbar, Button, Chip, Modal, Portal, Searchbar, Text, useTheme } from "react-native-paper";
+import { Appbar, Button, Chip, Divider, IconButton, Modal, Portal, Searchbar, Text, useTheme } from "react-native-paper";
 
 const notifications = [
     {
@@ -139,8 +139,11 @@ export default function NotificationScreen() {
                     onDismiss={hideFilter}
                     contentContainerStyle={styles.modal}
                 >
-                    <Text style={styles.title}>Bộ lọc</Text>
-
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Text style={[styles.title, { flex: 1 }]}>Bộ lọc</Text>
+                        <IconButton icon={"close"} onPress={hideFilter} />
+                    </View>
+                    <Divider style={{ marginBottom: 20 }} />
                     <Text>Chủ đề</Text>
                     <View style={styles.row}>
                         {filters.topic.map((f, idx) =>

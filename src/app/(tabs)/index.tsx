@@ -24,9 +24,8 @@ const EmployeeInfo = () => {
         <Appbar.Content title="" />
         <View style={{ flexDirection: "row" }}>
           <Appbar.Action icon="bell-outline" onPress={() => router.navigate("/screen/notifications")} />
-          <Badge size={8} style={{ position: "absolute", top: 10, right: 10 }} />
+          <Badge size={15} style={{ position: "absolute", top: 10, right: 10 }} >1</Badge>
         </View>
-
         <Appbar.Action icon={() => <AntDesign name="logout" size={24} color={colors.primary} />} onPress={logout} />
       </Appbar.Header>
 

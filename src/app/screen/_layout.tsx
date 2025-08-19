@@ -12,8 +12,12 @@ export default function Layout() {
                 <Stack.Screen name='employee-profile' options={{ headerShown: false }} />
                 <Stack.Screen name='exam-detail' options={{ headerShown: false }} />
                 <Stack.Screen name='guide-exam' options={{ headerShown: false }} />
+                <Stack.Screen name='guide-exam-detail' options={{ headerShown: false }} />
                 <Stack.Screen name='employee-register-exam' options={{ headerShown: false }} />
                 <Stack.Screen name='postpone-exam' options={{ headerShown: false }} />
+                <Stack.Screen name='register-topic' options={{ headerShown: false }} />
+                <Stack.Screen name='register-topic-detail' options={{ headerShown: false }} />
+                <Stack.Screen name='contest-info' options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto" />
         </>

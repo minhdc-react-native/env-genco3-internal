@@ -32,6 +32,7 @@ interface PopupContentProps {
     onClose?: () => void;
     showView?: React.ReactNode | (() => React.ReactNode);
     timeExit?: number;
+    color?: string;
 }
 
 export const PopupContent = ({
@@ -51,7 +52,8 @@ export const PopupContent = ({
     onCanCel,
     onClose,
     showView,
-    timeExit
+    timeExit,
+    color
 }: PopupContentProps) => {
     const { colors } = useTheme();
     const getIconColor = {
@@ -97,7 +99,7 @@ export const PopupContent = ({
 
     const getIcon = () => {
         let iconName: "checkmark-circle" | "warning" | "close-circle" | "information-circle" | "help-circle" | null = null;
-        const iconColor = getIconColor[iconType];
+        const iconColor = color || getIconColor[iconType];
         switch (iconType) {
             case 'success':
                 iconName = 'checkmark-circle';
@@ -233,7 +235,7 @@ export const PopupContent = ({
                                             // onClose?.();
                                         }}
                                     >
-                                        <Text style={{ padding: 5, borderRadius: 6, borderWidth: 1, borderColor: getIconColor[iconType] }}>
+                                        <Text style={{ padding: 5, borderRadius: 6, borderWidth: 1, borderColor: color || getIconColor[iconType] }}>
                                             {cancelText}
                                         </Text>
                                     </Pressable>}
@@ -243,7 +245,7 @@ export const PopupContent = ({
                                             onConfirm?.(inputText);
                                             // onClose?.();
                                         }}>
-                                        <Text style={{ padding: 5, borderRadius: 6, backgroundColor: getIconColor[iconType], borderWidth: 0, color: colors.background }}>
+                                        <Text style={{ padding: 5, borderRadius: 6, backgroundColor: color || getIconColor[iconType], borderWidth: 0, color: colors.background }}>
                                             {confirmText}
                                         </Text>
                                     </Pressable>

@@ -5,12 +5,13 @@ import { api } from "@/utils/epsApi";
 import { epsStorage } from "@/utils/epsStorage";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useTheme } from "react-native-paper";
 import { useData } from "./zustand/useData";
 import { useTab } from "./zustand/useTab";
 const { getToken, setToken, setLogin, removeLogin, clearTokens } = epsStorage();
 
 export const useAuth = () => {
-
+    const { colors } = useTheme();
     const [isLogin, setIsLogin] = useState<boolean | null>(null);
     const { show, hide } = useLoading();
     const { showToast } = useToast();
@@ -19,6 +20,7 @@ export const useAuth = () => {
     const setUser = useData((state) => state.setUser);
     const setIndex = useTab((state) => state.setIndex);
     const setRegister = useTab((state) => state.setRegister);
+    const setRegisterTopic = useTab((state) => state.setRegisterTopic);
     const getDataBegin = async () => {
         await api.get({
             link: `/employees/current-user/`,
@@ -41,6 +43,7 @@ export const useAuth = () => {
                         router.replace("/(auth)/login");
                         setUser(null);
                         setRegister("notRegister");
+                        setRegisterTopic("notRegister");
                         setIndex(0);
                     },
                     setLoading: (loading) => loading ? show("Đăng xuất...") : hide(),
@@ -48,7 +51,8 @@ export const useAuth = () => {
             },
             showCancel: true,
             confirmText: "Có thoát", cancelText: "Không",
-            iconType: "question"
+            iconType: "question",
+            color: colors.primary
         });
     }
     const login = async (login: ILogin) => {
