@@ -1,10 +1,16 @@
+import { Field } from '@/components/Field';
+import { StarRating } from '@/components/starRating';
+import { useHelper } from '@/hooks/useHelper';
+import { useData } from '@/hooks/zustand/useData';
 import { router } from 'expo-router';
 import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Appbar, Card, Icon, Text, useTheme } from 'react-native-paper';
+import { Appbar, Card, Chip, Divider, Icon, Text, useTheme } from 'react-native-paper';
 
 export default function ExamDetail() {
+    const itemData = useData((state) => state.itemData);
     const { colors } = useTheme();
+    const { formatDate } = useHelper();
     return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
             {/* Appbar */}
@@ -13,27 +19,29 @@ export default function ExamDetail() {
                 {/* <Appbar.Content title="Chi tiết kỳ thi" /> */}
             </Appbar.Header>
             <Text variant="titleLarge" style={{ fontWeight: '600', marginBottom: 4, marginHorizontal: 20 }}>
-                Thi giữ bậc - T3/2024
+                {`${itemData?.examPeriodName}`}
             </Text>
             <ScrollView contentContainerStyle={{ padding: 16 }} stickyHeaderIndices={[2]}>
                 {/* Tiêu đề kỳ thi */}
                 <Text variant="bodyMedium" style={{ color: 'gray', marginBottom: 16 }}>
-                    Ngày thi: 05/04/2024
+                    {`Ngày thi: ${formatDate(itemData?.effectiveDate, "dd/MM/yyyy HH:mm:ss", true)}`}
                 </Text>
 
                 {/* Box kết quả */}
                 <View style={[styles.resultRow, { backgroundColor: colors.background }]}>
-                    <Card style={styles.resultCard}>
-                        <Card.Content style={{ alignItems: 'center' }}>
+                    <Card style={styles.resultCard} contentStyle={{ height: 100, justifyContent: "center" }}>
+                        <View style={{ gap: 10, alignSelf: "center" }}>
                             <Text style={styles.resultLabel}>Điểm TB</Text>
-                            <Text style={styles.resultValue}>7.5</Text>
-                        </Card.Content>
+                            <Text style={[styles.resultValue, { textAlign: "center" }]}>{itemData?.finalScore}</Text>
+                        </View>
                     </Card>
-                    <Card style={styles.resultCard}>
-                        <Card.Content style={{ alignItems: 'center' }}>
-                            <Text style={styles.resultLabel}>Kết quả</Text>
-                            <Text style={[styles.resultValue, { color: 'green' }]}>Đạt</Text>
-                        </Card.Content>
+                    <Card style={styles.resultCard} contentStyle={{ height: 100, justifyContent: "center" }}>
+                        <View style={{ gap: 10, alignSelf: "center" }}>
+                            <Text style={[styles.resultLabel, { textAlign: "center" }]}>Kết quả</Text>
+                            <Chip style={[{ alignSelf: "flex-start", backgroundColor: itemData?.isPass ? colors.primary : colors.error }]} textStyle={{ color: "white" }}>
+                                {itemData?.isPass ? 'Đạt' : 'Rớt'}
+                            </Chip>
+                        </View>
                     </Card>
                 </View>
 
@@ -45,80 +53,42 @@ export default function ExamDetail() {
                     </View>
                 </View>
                 {/* Thông tin chi tiết */}
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Họ và tên</Text>
-                    <Text style={styles.value}>Trần Việt Cường</Text>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Field label="Trạng thái đăng ký" value={itemData?.status} />
+                    <Divider style={{ marginBottom: 10 }} />
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <Field label="Bậc thợ trước thi" value={`${itemData?.rank}/${itemData?.rankScale}`} />
+                        <StarRating value={itemData?.rank ?? 0} max={itemData?.rankScale ?? 0} />
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                        <Field label="Bậc thợ thi" value={`${itemData?.finalScore}/${itemData?.rankScale}`} />
+                        <StarRating value={itemData?.finalScore ?? 0} max={itemData?.rankScale ?? 0} />
+                    </View>
+                    <Divider style={{ marginBottom: 10 }} />
+                    <Field label="Điểm thi an toàn" value={`.../10`} />
+                    <Field label="Điểm phần VHDN" value={`.../10`} />
+                    <Field label="Điểm lý thuyết" value={`.../10`} />
+                    <Text>Điểm vấn đáp</Text>
+                    <Field label="Giám khảo 1" value={`.../10`} style={{ flexDirection: "row", alignItems: "center", marginBottom: 0 }} />
+                    <Text variant='bodyMedium' style={{ color: colors.secondary, marginBottom: 15 }}>Ghi chú:</Text>
+                    <Field label="Giám khảo 2" value={`.../10`} style={{ flexDirection: "row", alignItems: "center", marginBottom: 0 }} />
+                    <Text variant='bodyMedium' style={{ color: colors.secondary, marginBottom: 15 }}>Ghi chú:</Text>
+                    <Field label="Giám khảo 3" value={`.../10`} style={{ flexDirection: "row", alignItems: "center", marginBottom: 0 }} />
+                    <Text variant='bodyMedium' style={{ color: colors.secondary, marginBottom: 15 }}>Ghi chú:</Text>
+                    <Field label="Giám khảo 4" value={`.../10`} style={{ flexDirection: "row", alignItems: "center", marginBottom: 0 }} />
+                    <Text variant='bodyMedium' style={{ color: colors.secondary, marginBottom: 15 }}>Ghi chú:</Text>
+                    <Divider style={{ marginBottom: 10 }} />
+                    <Field label="Nhận xét của hội đồng thi" value={`.....`} />
+                    <Field label="Ghi chú" value={`.....`} />
+                    <Divider style={{ marginBottom: 10 }} />
+                    <Field label="Điểm trung bình" value={itemData?.finalScore} />
+                    <Field label="Kết quả" value={itemData?.isPass ? 'Đạt' : 'Rớt'} />
+                    <Divider style={{ marginBottom: 10 }} />
+                    <Field label="Quyết định số" value={`...`} />
+                    <Field label="Ngày ký" value={`...`} />
+                    <Field label="File" value={`???`} />
                 </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Mã nhân viên</Text>
-                    <Text style={styles.value}>EPS-0072</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Chức danh</Text>
-                    <Text style={styles.value}>Công nhân Sửa chữa Tuabin</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Phân xưởng</Text>
-                    <Text style={styles.value}>I/PXSC CƠ-NHIỆT PHÚ MỸ</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Bậc thợ hiện tại</Text>
-                    <Text style={styles.value}>6/7</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Bậc thợ thi</Text>
-                    <Text style={styles.value}>6/7</Text>
-                </View>
-                {/* Thông tin chi tiết */}
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Họ và tên</Text>
-                    <Text style={styles.value}>Trần Việt Cường</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Mã nhân viên</Text>
-                    <Text style={styles.value}>EPS-0072</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Chức danh</Text>
-                    <Text style={styles.value}>Công nhân Sửa chữa Tuabin</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Phân xưởng</Text>
-                    <Text style={styles.value}>I/PXSC CƠ-NHIỆT PHÚ MỸ</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Bậc thợ hiện tại</Text>
-                    <Text style={styles.value}>6/7</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Bậc thợ thi</Text>
-                    <Text style={styles.value}>6/7</Text>
-                </View>
-                {/* Thông tin chi tiết */}
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Họ và tên</Text>
-                    <Text style={styles.value}>Trần Việt Cường</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Mã nhân viên</Text>
-                    <Text style={styles.value}>EPS-0072</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Chức danh</Text>
-                    <Text style={styles.value}>Công nhân Sửa chữa Tuabin</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Phân xưởng</Text>
-                    <Text style={styles.value}>I/PXSC CƠ-NHIỆT PHÚ MỸ</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Bậc thợ hiện tại</Text>
-                    <Text style={styles.value}>6/7</Text>
-                </View>
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Bậc thợ thi</Text>
-                    <Text style={styles.value}>6/7</Text>
-                </View>
+                <View style={{ height: 100 }} />
             </ScrollView>
         </View>
     );
@@ -132,11 +102,9 @@ const styles = StyleSheet.create({
     },
     resultCard: {
         flex: 1,
-        marginHorizontal: 4,
-        borderRadius: 12,
+        marginHorizontal: 4
     },
     resultLabel: {
-        color: 'gray',
         fontWeight: '500',
         marginBottom: 4,
     },
@@ -157,18 +125,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#333',
-    },
-    infoRow: {
-        marginBottom: 16,
-    },
-    label: {
-        fontSize: 13,
-        color: 'gray',
-        marginBottom: 2,
-    },
-    value: {
-        fontSize: 15,
-        fontWeight: '500',
-        color: '#222',
     },
 });

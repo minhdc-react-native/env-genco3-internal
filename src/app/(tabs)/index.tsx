@@ -1,10 +1,14 @@
+import LoadingScreen from '@/components/loading-screen';
 import { StarRating } from '@/components/starRating';
+import { EXAM_STATUS } from '@/constants/EpsData';
 import { useAuth } from '@/hooks/useAuth';
 import { useData } from '@/hooks/zustand/useData';
 import { useTab } from '@/hooks/zustand/useTab';
+import { api } from '@/utils/epsApi';
 import { AntDesign } from '@expo/vector-icons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Avatar, Badge, Button, Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 const sizeLogo = { width: 874, height: 537 }
@@ -12,7 +16,31 @@ const EmployeeInfo = () => {
   const { colors } = useTheme();
   const setIndex = useTab((state) => state.setIndex);
   const user = useData((state) => state.user);
+  const [loading, setLoading] = useState(false);
+  const currentExam = useData((state) => state.currentExam);
+  const setCurrentExam = useData((state) => state.setCurrentExam);
   const { logout } = useAuth();
+
+  const onGetCurrentExam = useCallback(() => {
+    api.get({
+      link: `/exams/employee/${user?.id}/exam-periods`,
+      callBack: (res) => {
+        if (res && res.returnData) {
+          const dataExams: any[] = res.returnData;
+          const exam = dataExams.find(item => item.employeeExamPeriod.status === EXAM_STATUS.REGISTRATION);
+          setCurrentExam(exam ? exam : null);
+        }
+      },
+      setLoading: setLoading
+    })
+  }, [user?.id, setLoading])
+
+  useFocusEffect(
+    useCallback(() => {
+      onGetCurrentExam();
+    }, [onGetCurrentExam])
+  )
+
   return (
     <>
       {/* Header */}
@@ -24,7 +52,7 @@ const EmployeeInfo = () => {
         <Appbar.Content title="" />
         <View style={{ flexDirection: "row" }}>
           <Appbar.Action icon="bell-outline" onPress={() => router.navigate("/screen/notifications")} />
-          <Badge size={15} style={{ position: "absolute", top: 10, right: 10 }} >1</Badge>
+          {currentExam && <Badge size={15} style={{ position: "absolute", top: 10, right: 10 }} >1</Badge>}
         </View>
         <Appbar.Action icon={() => <AntDesign name="logout" size={24} color={colors.primary} />} onPress={logout} />
       </Appbar.Header>
@@ -37,7 +65,8 @@ const EmployeeInfo = () => {
             source={{ uri: user?.imageUrl || "http://125.212.225.203:7024/media/avatars/300-2.png" }}
           />
         </View>
-        <Text variant='headlineMedium'>{user?.fullName}</Text>
+        <Text variant='titleMedium' style={{ fontWeight: "bold" }}>{user?.code}</Text>
+        <Text variant='titleMedium' style={{ color: colors.secondary }}>{user?.fullName}</Text>
       </View>
 
       {/* Info Cards */}
@@ -63,8 +92,8 @@ const EmployeeInfo = () => {
       </View>
 
       <View style={styles.actions}>
-        <Button mode="outlined" icon="chart-bar" onPress={() => router.navigate("/screen/history-exams")}>
-          Lịch sử nâng bậc
+        <Button mode="outlined" icon="chart-bar" onPress={() => router.navigate("/screen/work-process")}>
+          Quá trình công tác
         </Button>
         <Button mode="text" icon="arrow-right" contentStyle={{ flexDirection: "row-reverse" }} onPress={() => router.navigate("/screen/employee-profile")}>
           Chi tiết hồ sơ
@@ -76,21 +105,23 @@ const EmployeeInfo = () => {
         <Icon source={"timer"} size={24} color={colors.primary} />
         <Text variant="titleMedium">Hoạt Động</Text>
       </View>
-      <Card style={styles.activityCard}>
+      {loading ? <LoadingScreen /> : <Card style={styles.activityCard}>
         <Card.Content style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
-          <Pressable style={(pressed) => [{ opacity: pressed ? 0.7 : 1, flexDirection: "row", alignItems: "center", paddingRight: 10 }]}
+          <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1, flexDirection: "row", alignItems: "center", paddingRight: 10 }]}
             onPress={() => setIndex(1)}
           >
-            <View>
-              <Text variant="titleMedium">Thi Nâng Bậc - Đợt 2/2025</Text>
+            {currentExam ? <View>
+              <Text variant="titleMedium" style={{ fontWeight: "bold" }}>{`${currentExam?.employeeExamPeriod?.examType?.name} (${currentExam?.employeeExamPeriod?.name})`}</Text>
               <Text variant="bodyMedium" style={{ marginTop: 4 }}>
                 Bạn chưa xác nhận tham gia thi. Vui lòng thực hiện xác nhận trước thời gian quy định.
               </Text>
-            </View>
+            </View> : <Text style={{ flex: 1 }}>
+              Bạn không có thông tin kỳ thi nào!
+            </Text>}
             <Icon source={() => <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />} size={24} />
           </Pressable>
         </Card.Content>
-      </Card>
+      </Card>}
     </>
   );
 }

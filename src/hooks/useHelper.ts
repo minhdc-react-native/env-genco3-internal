@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 export const useHelper = () => {
-    const formatDate = (strDate?: string, format: 'dd/MM/yyyy HH:mm:ss' | 'yyyy-MM-dd HH:mm:ss' = 'dd/MM/yyyy HH:mm:ss', removeTime = false) => {
+    const formatDate = (strDate?: string, format: 'dd/MM/yyyy HH:mm:ss' | 'yyyy-MM-dd HH:mm:ss' = 'dd/MM/yyyy HH:mm:ss', removeTime = true) => {
         if (!strDate) return '';
         const date = strDate ? dayjs.utc(strDate).format("YYYY-MM-DD") : dayjs.utc().format("YYYY-MM-DD");
         const d = dayjs(date);

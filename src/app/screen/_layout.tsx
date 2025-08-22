@@ -18,6 +18,11 @@ export default function Layout() {
                 <Stack.Screen name='register-topic' options={{ headerShown: false }} />
                 <Stack.Screen name='register-topic-detail' options={{ headerShown: false }} />
                 <Stack.Screen name='contest-info' options={{ headerShown: false }} />
+                <Stack.Screen name='work-process' options={{ headerShown: false }} />
+                <Stack.Screen name='work-process-salary' options={{ headerShown: false }} />
+                <Stack.Screen name='work-process-salary-detail' options={{ headerShown: false }} />
+                <Stack.Screen name='work-process-worker' options={{ headerShown: false }} />
+                <Stack.Screen name='work-process-worker-detail' options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto" />
         </>

@@ -15,7 +15,7 @@ const GuideExamDetail = () => {
             </Appbar.Header>
 
             {/* Content */}
-            <ScrollView stickyHeaderIndices={[0]}>
+            <ScrollView>
                 <View style={{ backgroundColor: colors.background, paddingHorizontal: 30, paddingTop: 10 }}>
                     <Text style={styles.sectionTitle}>Quy định & Điều kiện</Text>
 

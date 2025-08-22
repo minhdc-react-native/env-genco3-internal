@@ -24,6 +24,12 @@ declare global {
         departmentName: string;
         teamName: string;
         currentRank: number;
-        rankScale: number
+        rankScale: number,
+        accountType: 0 | 1 | 2;
+        [key: string]: any
+    }
+    interface IDataBase {
+        id: string;
+        [key: string]: any
     }
 }

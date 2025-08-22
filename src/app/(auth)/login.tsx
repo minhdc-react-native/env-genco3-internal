@@ -90,7 +90,8 @@ export default function Login() {
                         onChange={(value) => setLoginInfo(prev => ({ ...prev, remember: (typeof value === "boolean" ? value : value === "C") }))}
                         type="switch"
                     />
-                    <Button onPress={() => { }}>Quên Mật Khẩu?</Button>
+                    {/* <Button onPress={() => { }}>Quên Mật Khẩu?</Button> */}
+                    <View />
                 </View>
 
                 {/* Nút đăng nhập */}

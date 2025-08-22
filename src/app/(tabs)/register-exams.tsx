@@ -1,10 +1,14 @@
 import VcSelector from "@/components/vcSelector";
-import { useTab } from "@/hooks/zustand/useTab";
+import { EXAM_REGISTRATION_STATUS } from "@/constants/EpsData";
+import { useHelper } from "@/hooks/useHelper";
+import { useData } from "@/hooks/zustand/useData";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { Appbar, Button, Card, Divider, IconButton, Text, useTheme } from "react-native-paper";
+import HistoryExams from "../screen/history-exams";
+import NoneExam from "../screen/none-exam";
 interface IItem {
     id: string | number;
     value: string;
@@ -14,19 +18,20 @@ const tabs: IItem[] = [
 ];
 const RegisterExams = () => {
     const { colors } = useTheme();
-    const register = useTab((state) => state.register);
     const [currentTab, setCurrentTab] = useState<IItem>(tabs[0]);
-
+    const currentExam = useData((state) => state.currentExam);
+    const register = currentExam?.examRegistration?.registrationStatus;
     return (
         <>
             <Appbar.Header>
                 <Appbar.Content title="Đăng ký bài thi" />
                 <IconButton mode="contained-tonal" icon={"help"} size={24} iconColor={colors.primary} onPress={() => router.navigate("/screen/guide-exam")} />
             </Appbar.Header>
-            <VcSelector data={tabs} value={currentTab.id} onChange={(value) => setCurrentTab(value)} />
+            <VcSelector containerStyle={{ paddingHorizontal: 50 }} data={tabs} value={currentTab.id} onChange={(value) => setCurrentTab(value)} type="line" />
             <Divider />
             <View style={{ flex: 1 }}>
-                {currentTab.id === "current" ? (register === "Registered" ? <CurrentRouteTopic /> : <CurrentRoute />) : <History />}
+                {currentTab.id === "current" ?
+                    (currentExam ? (register !== EXAM_REGISTRATION_STATUS.SIGNED ? <CurrentRoute /> : <CurrentRouteTopic />) : <NoneExam />) : <HistoryExams hideHeader={true} />}
             </View>
         </>
     );
@@ -35,8 +40,10 @@ const RegisterExams = () => {
 export default RegisterExams;
 
 const CurrentRoute = () => {
-    const register = useTab((state) => state.register);
+    const currentExam = useData((state) => state.currentExam);
+    const register = currentExam?.examRegistration?.registrationStatus;
     const { colors } = useTheme();
+    const { formatDate } = useHelper();
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Image
@@ -45,20 +52,19 @@ const CurrentRoute = () => {
                 resizeMode="contain"
             />
             <Text variant="titleMedium" style={styles.title}>
-                Thi Nâng Bậc - Đợt 2/2025
+                {currentExam?.employeeExamPeriod?.name}
             </Text>
             <Text variant="bodyMedium" style={{ color: colors.primary, marginBottom: 8 }}>
                 Đăng Ký Tham Gia
             </Text>
             <Text variant="bodyMedium" style={styles.textCenter}>
-                Bạn nằm trong danh sách thi nâng bậc đợt tháng 9/2025, vui lòng xác nhận
-                đăng ký tham gia trước thời hạn.
+                {`Bạn nằm trong danh sách ${currentExam?.employeeExamPeriod?.examType?.name} đợt ${formatDate(currentExam?.employeeExamPeriod?.examMonth)}, vui lòng xác nhận đăng ký tham gia trước thời hạn.`}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
                 <IconButton icon="calendar" size={20} />
-                <Text>Thời Gian: 03/09/2025 - 05/09/2025</Text>
+                <Text>{`Thời Gian: ${formatDate(currentExam?.employeeExamPeriod?.registrationStartDate)} - ${formatDate(currentExam?.employeeExamPeriod?.registrationEndDate)}`}</Text>
             </View>
-            {register === "notRegister" ? <>
+            {register === EXAM_REGISTRATION_STATUS.PENDING ? <>
                 <Button
                     mode="contained"
                     style={styles.registerBtn}
@@ -90,7 +96,9 @@ const CurrentRoute = () => {
     );
 };
 const CurrentRouteTopic = () => {
-    const registerTopic = useTab((state) => state.registerTopic);
+    const currentExam = useData((state) => state.currentExam);
+    const register = currentExam?.examRegistration?.registrationStatus;
+    const registerTopic = 'notRegister';
     const { colors } = useTheme();
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -141,45 +149,7 @@ const CurrentRouteTopic = () => {
         </View>
     );
 };
-type IExam = {
-    id: string;
-    title: string;
-    date: string;
-    status: string;
-};
-const DATA: IExam[] = [
-    { id: '1', title: 'Thi giữ bậc - T1/2024', date: '10/01/2024', status: 'Đạt' },
-    { id: '2', title: 'Thi nâng bậc - T2/2024', date: '01/02/2024', status: 'Trượt' },
-    { id: '3', title: 'Thi giữ bậc - T3/2024', date: '10/03/2024', status: 'Đạt' },
-];
 
-const History = () => {
-    const { colors } = useTheme();
-    const renderItem = ({ item }: { item: IExam }) => (
-        <Card style={[styles.cardItem, { backgroundColor: colors.elevation.level1 }]} mode="contained">
-            <Pressable style={(pressed) => [{ opacity: pressed ? 0.7 : 1 }, styles.row]} onPress={() => router.navigate("/screen/exam-detail")}>
-                <View style={{ flex: 1 }}>
-                    <Text variant="titleMedium" style={styles.titleItem}>{item.title}</Text>
-                    <Text variant="bodySmall" style={{ color: '#666' }}>Ngày thi: {item.date}</Text>
-                </View>
-                <Text style={[styles.status, item.status === "Trượt" && { color: 'red' }]}>{item.status}</Text>
-                <IconButton icon="chevron-right" size={20} />
-            </Pressable>
-        </Card>
-    );
-
-    return (
-        <View style={{ flex: 1 }}>
-            <FlatList
-                data={DATA}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ padding: 12 }}
-                ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-            />
-        </View>
-    );
-}
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -187,18 +157,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 20
-    },
-    card: {
-        padding: 12,
-        borderRadius: 12,
-    },
-    cardItem: {
-        borderRadius: 12,
-        padding: 12,
-    },
-    titleItem: {
-        marginBottom: 4,
-        fontWeight: '500',
     },
     title: {
         fontWeight: 'bold',
@@ -214,14 +172,5 @@ const styles = StyleSheet.create({
         marginTop: 16,
         borderRadius: 25,
         width: '100%',
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    status: {
-        color: 'green',
-        fontWeight: '600',
-        marginRight: 4,
     },
 });

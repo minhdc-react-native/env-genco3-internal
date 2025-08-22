@@ -1,59 +1,37 @@
-import { useHelper } from "@/hooks/useHelper";
-import { useData } from "@/hooks/zustand/useData";
-import { api } from "@/utils/epsApi";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
-import { RefreshControl } from "react-native-gesture-handler";
-import { Appbar, Card, Chip, Text, useTheme } from "react-native-paper";
+import { Appbar, Card, Text, useTheme } from "react-native-paper";
+
+const timelineData = [
+    { id: "1", date: "01/05/2025", title: "Thợ bậc 6/7", current: true },
+    { id: "2", date: "01/04/2025", title: "Thợ bậc 6/7", current: false },
+    { id: "3", date: "01/03/2025", title: "Thợ bậc 6/7", current: false },
+    { id: "4", date: "01/02/2025", title: "Thợ bậc 6/7", current: false },
+    { id: "5", date: "01/01/2025", title: "Thợ bậc 6/7", current: false },
+];
 
 interface IProg {
     hideHeader?: boolean
 }
-export default function HistoryExams({ hideHeader = false }: IProg) {
-    const [data, setData] = useState<IDataBase[]>([]);
-    const { formatDate } = useHelper();
-    const [loading, setLoading] = useState<boolean>(false);
-    const user = useData((state) => state.user);
-    const setItemData = useData((state) => state.setItemData);
-    const onRefresh = () => {
-        api.get({
-            link: `/employees/period-history/${user?.id}`,
-            callBack: (res) => {
-                setData(res.returnData);
-            },
-            setLoading: setLoading
-        })
-    }
-
-    useEffect(() => {
-        onRefresh();
-    }, []);
-
+export default function WorkProcessWorker({ hideHeader = false }: IProg) {
     const { colors } = useTheme();
     const renderItem = ({ item }: any) => (
         <View style={styles.row}>
-            <View style={styles.timeline}>
-                <View style={[styles.circle, { borderColor: item.isPass ? colors.primary : colors.error }]} />
-                <View style={styles.line} />
-            </View>
-            <Card style={[styles.card, { backgroundColor: colors.background }]}>
+            <Card style={[styles.card, { backgroundColor: item?.current ? colors.elevation.level1 : colors.background }]}>
                 <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 10 }]}
-                    onPress={() => {
-                        setItemData(item);
-                        router.navigate({ pathname: "/screen/exam-detail" })
-                    }}
+                    onPress={() => router.navigate("/screen/work-process-worker-detail")}
                 >
-                    <Card.Content style={{ gap: 10 }}>
+                    <Card.Content style={{ flex: 1 }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <Text style={[styles.month]}>{`Ngày áp dụng: ${item.date}`}</Text>
+                            {item?.current && <MaterialCommunityIcons name="check" size={24} color="blue" />}
+                        </View>
                         <Text variant="titleMedium" style={{ marginTop: 6 }}>
-                            {item.examPeriodName}
+                            {item.title}
                         </Text>
-                        <Text style={{ color: colors.secondary }}>{`Ngày thi: ${formatDate(item.examMonth, "dd/MM/yyyy HH:mm:ss", true)}`}</Text>
-                        <Chip style={[styles.chip, { backgroundColor: item.isPass ? colors.primary : colors.error }]} textStyle={{ color: "white" }}>
-                            {item.isPass ? 'Đạt' : 'Rớt'}
-                        </Chip>
                     </Card.Content>
                     <MaterialCommunityIcons
                         name="chevron-right"
@@ -71,23 +49,15 @@ export default function HistoryExams({ hideHeader = false }: IProg) {
             {/* Header */}
             {!hideHeader && <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
-                <Appbar.Content title="Lịch sử thi" />
+                <Appbar.Content title="Bậc thợ" />
                 <Appbar.Action icon="magnify" onPress={() => { }} />
             </Appbar.Header>}
 
             <FlatList
-                data={data}
+                data={timelineData}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
                 contentContainerStyle={{ padding: 16 }}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={loading}
-                        onRefresh={onRefresh}
-                        colors={[colors.primary]} // màu vòng quay (Android)
-                        tintColor={colors.primary}  // màu vòng quay (iOS)
-                    />
-                }
             />
         </View>
     );

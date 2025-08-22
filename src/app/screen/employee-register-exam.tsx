@@ -1,5 +1,9 @@
 import { usePopup } from "@/components/dialog/popupProvider";
-import { useTab } from "@/hooks/zustand/useTab";
+import { useToast } from "@/components/dialog/useToast";
+import { StarRating } from "@/components/starRating";
+import { useHelper } from "@/hooks/useHelper";
+import { useData } from "@/hooks/zustand/useData";
+import { api } from "@/utils/epsApi";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as React from "react";
@@ -7,9 +11,20 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Button, Divider, Text, useTheme } from "react-native-paper";
 
 export default function EmployeeRegister() {
-    const setRegister = useTab((state) => state.setRegister);
+    const { showToast } = useToast();
     const { showPopup } = usePopup();
     const { colors } = useTheme();
+    const currentExam = useData((state) => state.currentExam);
+    const { formatDate } = useHelper();
+    const onRegisterExam = () => {
+        api.post({
+            link: `/api/v1/exams/${currentExam?.employeeExamPeriod?.id}/register`,
+            callBack: (res) => {
+                showToast("Bạn đã đăng ký đề tài thành công!", { type: "success" });
+                router.back();
+            }
+        })
+    }
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Appbar */}
@@ -19,10 +34,9 @@ export default function EmployeeRegister() {
 
             {/* Nội dung */}
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.title}>Thi Nâng Bậc - Đợt 2/2025</Text>
+                <Text style={styles.title}>{currentExam?.employeeExamPeriod?.name}</Text>
                 <Text style={styles.description}>
-                    Bạn nằm trong danh sách thi nâng bậc đợt tháng 9/2025. Vui lòng kiểm tra lại
-                    thông tin bên dưới trước khi đăng ký tham gia.
+                    {`Bạn nằm trong danh sách ${currentExam?.employeeExamPeriod?.examType?.name} đợt ${formatDate(currentExam?.employeeExamPeriod?.examMonth)}, vui lòng xác nhận đăng ký tham gia trước thời hạn.`}
                 </Text>
 
                 {/* Thông tin dự thi */}
@@ -37,25 +51,23 @@ export default function EmployeeRegister() {
                 <Divider />
 
                 {/* Thông tin chi tiết */}
-                <View style={[styles.infoBox, { backgroundColor: colors.elevation.level1 }]}>
+                <View style={[styles.infoBox, { backgroundColor: colors.elevation.level1, gap: 5 }]}>
                     <View style={styles.row}>
                         <Text style={styles.label}>Loại thi</Text>
-                        <Text style={styles.value}>Nâng bậc</Text>
+                        <Text style={styles.value}>{currentExam?.employeeExamPeriod?.examType?.name}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.label}>Đợt</Text>
-                        <Text style={styles.value}>2 (Tháng 9)</Text>
-                        <Text style={styles.label}>Năm</Text>
-                        <Text style={styles.value}>2025</Text>
+                        <Text style={styles.value}>{formatDate(currentExam?.employeeExamPeriod?.examMonth)}</Text>
                     </View>
                     <Divider />
                     <View style={styles.row}>
-                        <Text style={styles.label}>Bậc thợ hiện tại</Text>
-                        <Text style={styles.value}>6/7</Text>
+                        <Text style={styles.label}>{`Bậc thợ hiện tại: `}<Text style={{ fontWeight: "bold", color: colors.primary }}>{`${currentExam?.examRegistration?.currentRank}/${currentExam?.examRegistration?.rankScale}`}</Text></Text>
+                        <StarRating value={currentExam?.examRegistration?.currentRank ?? 0} max={currentExam?.examRegistration?.rankScale ?? 0} />
                     </View>
                     <View style={styles.row}>
-                        <Text style={styles.label}>Bậc thợ thi</Text>
-                        <Text style={styles.value}>7/7</Text>
+                        <Text style={styles.label}>{`Bậc thợ thi: `}<Text style={{ fontWeight: "bold", color: colors.error }}>{`${currentExam?.examRegistration?.examRank}/${currentExam?.examRegistration?.rankScale}`}</Text></Text>
+                        <StarRating value={currentExam?.examRegistration?.examRank ?? 0} max={currentExam?.examRegistration?.rankScale ?? 0} />
                     </View>
                 </View>
             </ScrollView>
@@ -70,10 +82,7 @@ export default function EmployeeRegister() {
                             showCancel: true,
                             cancelText: "Không",
                             confirmText: "Có tham gia",
-                            onConfirm: () => {
-                                setRegister("Registered");
-                                router.back();
-                            },
+                            onConfirm: onRegisterExam,
                             iconType: "question",
                             color: colors.primary
                         })

@@ -1,5 +1,4 @@
 import { usePopup } from "@/components/dialog/popupProvider";
-import { useTab } from "@/hooks/zustand/useTab";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -9,7 +8,6 @@ const RegisterTopicDetail = () => {
     const { sTopic } = useLocalSearchParams();
     const topic = sTopic ? JSON.parse(sTopic.toString()) : {};
     const { showPopup } = usePopup();
-    const setRegisterTopic = useTab((state) => state.setRegisterTopic);
     const { colors } = useTheme();
     const descriptionList = [
         "Tờ trình",
@@ -53,7 +51,6 @@ const RegisterTopicDetail = () => {
                         cancelText: "Không",
                         confirmText: "Có đăng ký",
                         onConfirm: () => {
-                            setRegisterTopic("Registered");
                             router.back();
                         },
                         iconType: "question",

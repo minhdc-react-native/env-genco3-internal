@@ -15,7 +15,7 @@ export const api = {
     get: async ({ link, config, setLoading, callBack, callError }: IApiParams): Promise<any> => {
         try {
             setLoading?.(true);
-            const res = await epsAxios.get(link, config);
+            const res: any = await epsAxios.get(link, config);
             if (res?.data?.error) {
                 callError?.(res.data);
                 return Promise.reject(res.data);

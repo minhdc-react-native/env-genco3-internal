@@ -1,3 +1,4 @@
+import { StarRating } from "@/components/starRating";
 import { useHelper } from "@/hooks/useHelper";
 import { useData } from "@/hooks/zustand/useData";
 import { api } from "@/utils/epsApi";
@@ -6,12 +7,12 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { Appbar, Card, Chip, Text, useTheme } from "react-native-paper";
+import { Appbar, Card, Text, useTheme } from "react-native-paper";
 
 interface IProg {
     hideHeader?: boolean
 }
-export default function HistoryExams({ hideHeader = false }: IProg) {
+export default function WorkProcessSalary({ hideHeader = false }: IProg) {
     const [data, setData] = useState<IDataBase[]>([]);
     const { formatDate } = useHelper();
     const [loading, setLoading] = useState<boolean>(false);
@@ -19,7 +20,7 @@ export default function HistoryExams({ hideHeader = false }: IProg) {
     const setItemData = useData((state) => state.setItemData);
     const onRefresh = () => {
         api.get({
-            link: `/employees/period-history/${user?.id}`,
+            link: `/employees/salary-decision/${user?.id}`,
             callBack: (res) => {
                 setData(res.returnData);
             },
@@ -30,30 +31,26 @@ export default function HistoryExams({ hideHeader = false }: IProg) {
     useEffect(() => {
         onRefresh();
     }, []);
-
     const { colors } = useTheme();
     const renderItem = ({ item }: any) => (
         <View style={styles.row}>
-            <View style={styles.timeline}>
-                <View style={[styles.circle, { borderColor: item.isPass ? colors.primary : colors.error }]} />
-                <View style={styles.line} />
-            </View>
-            <Card style={[styles.card, { backgroundColor: colors.background }]}>
+            <Card style={[styles.card, { backgroundColor: item?.apply ? colors.elevation.level1 : colors.background }]}>
                 <Pressable
                     style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 10 }]}
                     onPress={() => {
                         setItemData(item);
-                        router.navigate({ pathname: "/screen/exam-detail" })
+                        router.navigate("/screen/work-process-salary-detail");
                     }}
                 >
-                    <Card.Content style={{ gap: 10 }}>
+                    <Card.Content style={{ flex: 1, gap: 10 }}>
                         <Text variant="titleMedium" style={{ marginTop: 6 }}>
-                            {item.examPeriodName}
+                            {`Ngạch ${item.payrollCode}- Bậc ${item.rank}`}
                         </Text>
-                        <Text style={{ color: colors.secondary }}>{`Ngày thi: ${formatDate(item.examMonth, "dd/MM/yyyy HH:mm:ss", true)}`}</Text>
-                        <Chip style={[styles.chip, { backgroundColor: item.isPass ? colors.primary : colors.error }]} textStyle={{ color: "white" }}>
-                            {item.isPass ? 'Đạt' : 'Rớt'}
-                        </Chip>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <Text style={{ color: colors.secondary }}>{`Ngày áp dụng: ${formatDate(item.effectiveDate, "dd/MM/yyyy HH:mm:ss", true)}`}</Text>
+                            {item?.apply && <MaterialCommunityIcons name="check" size={24} color="blue" />}
+                        </View>
+                        <StarRating value={item?.salaryPeriod ?? 0} max={item?.rankScale ?? 0} />
                     </Card.Content>
                     <MaterialCommunityIcons
                         name="chevron-right"
@@ -71,7 +68,7 @@ export default function HistoryExams({ hideHeader = false }: IProg) {
             {/* Header */}
             {!hideHeader && <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
-                <Appbar.Content title="Lịch sử thi" />
+                <Appbar.Content title="Hưởng lương" />
                 <Appbar.Action icon="magnify" onPress={() => { }} />
             </Appbar.Header>}
 
@@ -104,7 +101,6 @@ const styles = StyleSheet.create({
         position: "relative",
     },
     date: { fontWeight: "700", fontSize: 16 },
-    month: { color: "#888", fontSize: 12, marginBottom: 6 },
     circle: {
         width: 14,
         height: 14,

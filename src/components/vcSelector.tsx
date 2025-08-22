@@ -20,9 +20,10 @@ interface IProgs {
     onChange?: (value: IItem) => void;
     containerStyle?: StyleProp<ViewStyle>;
     itemStyle?: StyleProp<ViewStyle>;
+    type?: 'box' | 'line'
 }
 
-const VcSelector = ({ data, value, onChange, containerStyle, itemStyle }: IProgs) => {
+const VcSelector = ({ data, value, onChange, containerStyle, itemStyle, type = "line" }: IProgs) => {
     const { colors } = useTheme();
 
     const [wrapperWidth, setWrapperWidth] = useState(0);
@@ -67,7 +68,7 @@ const VcSelector = ({ data, value, onChange, containerStyle, itemStyle }: IProgs
     return (
         <View style={[styles.container, containerStyle]}>
             <View
-                style={[styles.wrapper, { backgroundColor: colors.background }]}
+                style={[styles.wrapper, { backgroundColor: colors.background }, type === "box" && { borderRadius: 5 }]}
                 onLayout={onWrapperLayout}
             >
                 {/* slider */}
@@ -75,13 +76,19 @@ const VcSelector = ({ data, value, onChange, containerStyle, itemStyle }: IProgs
                     style={[
                         styles.slider,
                         animatedStyle,
-                        {
+                        type === "box" && {
                             width: itemWidth,
+                            borderRadius: 5,
+                            borderWidth: StyleSheet.hairlineWidth,
                             borderColor: colors.primary,
                             backgroundColor: colors.elevation.level2,
-                        },
+                        }
                     ]}
-                />
+                >
+                    <View style={{ position: "absolute", bottom: 0, width: itemWidth }}>
+                        <View style={{ height: 2, borderRadius: 2, backgroundColor: colors.primary, marginHorizontal: itemWidth / 4 }} />
+                    </View>
+                </Animated.View>
                 {data.map((item, index) => (
                     <Pressable
                         key={String(item.id) || String(index)}
@@ -101,6 +108,7 @@ const VcSelector = ({ data, value, onChange, containerStyle, itemStyle }: IProgs
                         </Text>
                     </Pressable>
                 ))}
+
             </View>
         </View>
     );
@@ -113,7 +121,7 @@ const styles = StyleSheet.create({
     },
     wrapper: {
         flexDirection: 'row',
-        borderRadius: 5,
+        // borderRadius: 5,
         position: 'relative',
         overflow: 'hidden',
         // Không set width ở đây để nó tự lấy theo cha
@@ -134,9 +142,9 @@ const styles = StyleSheet.create({
     slider: {
         position: 'absolute',
         height: '100%',
-        borderRadius: 5,
+        // borderRadius: 5,
         zIndex: 0,
-        borderWidth: StyleSheet.hairlineWidth,
+        // borderWidth: StyleSheet.hairlineWidth,
     },
 });
 

@@ -3,11 +3,16 @@ import { create } from 'zustand';
 interface IAuth {
     user: IUser | null;
     setUser: (user: IUser | null) => void;
+    itemData: IDataBase | null;
+    setItemData: (itemData: IDataBase | null) => void,
+    currentExam: Record<string, any> | null;
+    setCurrentExam: (currentExam: Record<string, any> | null) => void
 }
 export const useData = create<IAuth>((set) => ({
     user: null,
-    setUser: (user: IUser | null) =>
-        set((state) => ({
-            user: user
-        }))
+    setUser: (user: IUser | null) => set({ user }),
+    itemData: null,
+    setItemData: (itemData: IDataBase | null) => set({ itemData }),
+    currentExam: null,
+    setCurrentExam: (currentExam: Record<string, any> | null) => set({ currentExam })
 }));

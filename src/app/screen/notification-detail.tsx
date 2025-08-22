@@ -1,3 +1,4 @@
+import { useTab } from "@/hooks/zustand/useTab";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -6,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function NotificationDetail() {
     const { colors } = useTheme();
+    const setIndex = useTab((state) => state.setIndex);
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
             {/* Header */}
@@ -37,7 +39,10 @@ export default function NotificationDetail() {
                 mode="contained-tonal"
                 style={styles.button}
                 labelStyle={{ color: "#000", fontWeight: "bold" }}
-                onPress={() => console.log("Xem Chi Tiết")}
+                onPress={() => {
+                    router.back();
+                    setIndex(1);
+                }}
             >
                 Xem Chi Tiết
             </Button>

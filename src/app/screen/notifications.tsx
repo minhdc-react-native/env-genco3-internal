@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import * as React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, Chip, Divider, IconButton, Modal, Portal, Searchbar, Text, useTheme } from "react-native-paper";
 
 const notifications = [
@@ -46,7 +46,7 @@ const filters = {
 export default function NotificationScreen() {
     const theme = useTheme();
     const [visible, setVisible] = React.useState(false);
-
+    const { colors } = useTheme();
     const showFilter = () => setVisible(true);
     const hideFilter = () => setVisible(false);
     const [filerSelect, setFilterSelect] = React.useState<string[]>(['topic1', 'topic2', 'time1']);
@@ -64,12 +64,14 @@ export default function NotificationScreen() {
     );
 
     const renderItem = ({ item }: { item: typeof notifications[0] }) => (
-        <View
-            style={{
+        <Pressable
+            style={({ pressed }) => [{
+                opacity: pressed ? 0.7 : 1,
                 paddingVertical: 12,
                 borderBottomWidth: 0.5,
                 borderBottomColor: theme.colors.outlineVariant,
-            }}
+            }]}
+            onPress={() => router.replace("/screen/notification-detail")}
         >
             {/* Header row */}
             <View
@@ -98,12 +100,11 @@ export default function NotificationScreen() {
                     mode="outlined"
                     icon="file-document-outline"
                     style={{ alignSelf: "flex-start", marginTop: 6 }}
-                    onPress={() => router.navigate("/screen/notification-detail")}
                 >
                     {item.file}
                 </Button>
             )}
-        </View>
+        </Pressable>
     );
 
     return (
@@ -119,7 +120,7 @@ export default function NotificationScreen() {
                     placeholder="Tìm nội dung"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
-                    style={{ margin: 10, borderRadius: 20, flex: 1 }}
+                    style={{ margin: 10, borderRadius: 20, flex: 1, backgroundColor: colors.elevation.level1, borderWidth: 0.2, borderColor: colors.backdrop }}
                 />
                 <Appbar.Action icon="filter-variant" onPress={showFilter} />
             </View>
