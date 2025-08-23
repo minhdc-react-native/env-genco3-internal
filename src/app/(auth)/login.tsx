@@ -9,7 +9,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as z from "zod";
 const sizeLogo = { width: 874, height: 537 }
-const { getLogin } = epsStorage();
+const { getLogin, clearTokens } = epsStorage();
 const zod = z.object({
     userName: zRequiredString('Nhập tên'),
     password: zRequiredString('Nhập mật khẩu')
@@ -37,6 +37,7 @@ export default function Login() {
         const _getLoginInfo = async () => {
             const _login = await getLogin();
             if (_login) setLoginInfo(_login);
+            await clearTokens();
         }
         _getLoginInfo();
     }, [])

@@ -45,7 +45,7 @@ export default function EmployeeProfile() {
                     <Field label="Phòng ban" value={user?.departmentName ?? ''} />
                     <Field label="Tổ nhóm" value={user?.teamName ?? ''} />
                     <Field label="Chức vụ" value={user?.positionName ?? ''} />
-                    <Field label="Chuyên môn" value={user?.positionName ?? ''} />
+                    <Field label="Chuyên môn" value={user?.areaName ?? ''} />
 
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                         <Field label="Bậc hiện tại" value={`${user?.currentRank}/${user?.rankScale}`} />

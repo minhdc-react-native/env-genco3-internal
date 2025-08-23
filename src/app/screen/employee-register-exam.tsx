@@ -1,6 +1,8 @@
+import { useLoading } from "@/components/dialog/loadingProvider";
 import { usePopup } from "@/components/dialog/popupProvider";
 import { useToast } from "@/components/dialog/useToast";
 import { StarRating } from "@/components/starRating";
+import { EXAM_TYPE_LABELS } from "@/constants/EpsData";
 import { useHelper } from "@/hooks/useHelper";
 import { useData } from "@/hooks/zustand/useData";
 import { api } from "@/utils/epsApi";
@@ -13,16 +15,23 @@ import { Appbar, Button, Divider, Text, useTheme } from "react-native-paper";
 export default function EmployeeRegister() {
     const { showToast } = useToast();
     const { showPopup } = usePopup();
+    const { show, hide } = useLoading();
     const { colors } = useTheme();
     const currentExam = useData((state) => state.currentExam);
     const { formatDate } = useHelper();
     const onRegisterExam = () => {
         api.post({
-            link: `/api/v1/exams/${currentExam?.employeeExamPeriod?.id}/register`,
+            link: `/exams/${currentExam?.employeeExamPeriod?.id}/register`,
+            data: {
+                status: 1,
+                notes: "",
+                reason: ""
+            },
             callBack: (res) => {
-                showToast("Bạn đã đăng ký đề tài thành công!", { type: "success" });
+                showToast(res?.message, { type: "success" });
                 router.back();
-            }
+            },
+            setLoading: (loading) => loading ? show() : hide()
         })
     }
     return (
@@ -36,7 +45,7 @@ export default function EmployeeRegister() {
             <ScrollView contentContainerStyle={styles.content}>
                 <Text style={styles.title}>{currentExam?.employeeExamPeriod?.name}</Text>
                 <Text style={styles.description}>
-                    {`Bạn nằm trong danh sách ${currentExam?.employeeExamPeriod?.examType?.name} đợt ${formatDate(currentExam?.employeeExamPeriod?.examMonth)}, vui lòng xác nhận đăng ký tham gia trước thời hạn.`}
+                    {`Bạn nằm trong danh sách ${(EXAM_TYPE_LABELS as any)[currentExam?.employeeExamPeriod?.examType?.code]} đợt ${formatDate(currentExam?.employeeExamPeriod?.examMonth)}, vui lòng xác nhận đăng ký tham gia trước thời hạn.`}
                 </Text>
 
                 {/* Thông tin dự thi */}
@@ -54,7 +63,7 @@ export default function EmployeeRegister() {
                 <View style={[styles.infoBox, { backgroundColor: colors.elevation.level1, gap: 5 }]}>
                     <View style={styles.row}>
                         <Text style={styles.label}>Loại thi</Text>
-                        <Text style={styles.value}>{currentExam?.employeeExamPeriod?.examType?.name}</Text>
+                        <Text style={styles.value}>{(EXAM_TYPE_LABELS as any)[currentExam?.employeeExamPeriod?.examType?.code]}</Text>
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.label}>Đợt</Text>

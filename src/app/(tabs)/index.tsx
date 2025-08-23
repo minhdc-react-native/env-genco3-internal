@@ -1,6 +1,6 @@
 import LoadingScreen from '@/components/loading-screen';
 import { StarRating } from '@/components/starRating';
-import { EXAM_STATUS } from '@/constants/EpsData';
+import { EXAM_STATUS, EXAM_TYPE_LABELS } from '@/constants/EpsData';
 import { useAuth } from '@/hooks/useAuth';
 import { useData } from '@/hooks/zustand/useData';
 import { useTab } from '@/hooks/zustand/useTab';
@@ -111,7 +111,7 @@ const EmployeeInfo = () => {
             onPress={() => setIndex(1)}
           >
             {currentExam ? <View>
-              <Text variant="titleMedium" style={{ fontWeight: "bold" }}>{`${currentExam?.employeeExamPeriod?.examType?.name} (${currentExam?.employeeExamPeriod?.name})`}</Text>
+              <Text variant="titleMedium" style={{ fontWeight: "bold" }}>{`${(EXAM_TYPE_LABELS as any)[currentExam?.employeeExamPeriod?.examType?.code]} (${currentExam?.employeeExamPeriod?.name})`}</Text>
               <Text variant="bodyMedium" style={{ marginTop: 4 }}>
                 Bạn chưa xác nhận tham gia thi. Vui lòng thực hiện xác nhận trước thời gian quy định.
               </Text>

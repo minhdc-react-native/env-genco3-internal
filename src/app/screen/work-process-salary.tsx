@@ -7,12 +7,9 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { Appbar, Card, Text, useTheme } from "react-native-paper";
+import { Card, Text, useTheme } from "react-native-paper";
 
-interface IProg {
-    hideHeader?: boolean
-}
-export default function WorkProcessSalary({ hideHeader = false }: IProg) {
+export default function WorkProcessSalary() {
     const [data, setData] = useState<IDataBase[]>([]);
     const { formatDate } = useHelper();
     const [loading, setLoading] = useState<boolean>(false);
@@ -66,11 +63,11 @@ export default function WorkProcessSalary({ hideHeader = false }: IProg) {
     return (
         <View style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
             {/* Header */}
-            {!hideHeader && <Appbar.Header>
+            {/* {<Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
                 <Appbar.Content title="Hưởng lương" />
                 <Appbar.Action icon="magnify" onPress={() => { }} />
-            </Appbar.Header>}
+            </Appbar.Header>} */}
 
             <FlatList
                 data={data}

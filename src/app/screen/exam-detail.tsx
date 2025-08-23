@@ -21,7 +21,7 @@ export default function ExamDetail() {
             <Text variant="titleLarge" style={{ fontWeight: '600', marginBottom: 4, marginHorizontal: 20 }}>
                 {`${itemData?.examPeriodName}`}
             </Text>
-            <ScrollView contentContainerStyle={{ padding: 16 }} stickyHeaderIndices={[2]}>
+            <ScrollView contentContainerStyle={{ padding: 16 }} stickyHeaderIndices={[2]} showsVerticalScrollIndicator={false}>
                 {/* Tiêu đề kỳ thi */}
                 <Text variant="bodyMedium" style={{ color: 'gray', marginBottom: 16 }}>
                     {`Ngày thi: ${formatDate(itemData?.effectiveDate, "dd/MM/yyyy HH:mm:ss", true)}`}

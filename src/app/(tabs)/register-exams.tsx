@@ -1,5 +1,5 @@
 import VcSelector from "@/components/vcSelector";
-import { EXAM_REGISTRATION_STATUS } from "@/constants/EpsData";
+import { EXAM_REGISTRATION_STATUS, EXAM_TYPE_LABELS } from "@/constants/EpsData";
 import { useHelper } from "@/hooks/useHelper";
 import { useData } from "@/hooks/zustand/useData";
 import { AntDesign } from "@expo/vector-icons";
@@ -29,9 +29,23 @@ const RegisterExams = () => {
             </Appbar.Header>
             <VcSelector containerStyle={{ paddingHorizontal: 50 }} data={tabs} value={currentTab.id} onChange={(value) => setCurrentTab(value)} type="line" />
             <Divider />
-            <View style={{ flex: 1 }}>
+            {/* <View style={{ flex: 1 }}>
                 {currentTab.id === "current" ?
                     (currentExam ? (register !== EXAM_REGISTRATION_STATUS.SIGNED ? <CurrentRoute /> : <CurrentRouteTopic />) : <NoneExam />) : <HistoryExams hideHeader={true} />}
+            </View> */}
+            <View style={{ flex: 1 }}>
+                <View style={{ flex: 1, display: currentTab.id === "current" && currentExam && register !== EXAM_REGISTRATION_STATUS.SIGNED ? 'flex' : 'none' }}>
+                    <CurrentRoute />
+                </View>
+                <View style={{ flex: 1, display: currentTab.id === "current" && currentExam && register === EXAM_REGISTRATION_STATUS.SIGNED ? 'flex' : 'none' }}>
+                    <CurrentRouteTopic />
+                </View>
+                <View style={{ flex: 1, display: currentTab.id === "current" && !currentExam ? 'flex' : 'none' }}>
+                    <NoneExam />
+                </View>
+                <View style={{ flex: 1, display: currentTab.id === "history" ? 'flex' : 'none' }}>
+                    <HistoryExams />
+                </View>
             </View>
         </>
     );
@@ -52,13 +66,13 @@ const CurrentRoute = () => {
                 resizeMode="contain"
             />
             <Text variant="titleMedium" style={styles.title}>
-                {currentExam?.employeeExamPeriod?.name}
+                {`${(EXAM_TYPE_LABELS as any)[currentExam?.employeeExamPeriod?.examType?.code]} (${currentExam?.employeeExamPeriod?.name})`}
             </Text>
             <Text variant="bodyMedium" style={{ color: colors.primary, marginBottom: 8 }}>
                 Đăng Ký Tham Gia
             </Text>
             <Text variant="bodyMedium" style={styles.textCenter}>
-                {`Bạn nằm trong danh sách ${currentExam?.employeeExamPeriod?.examType?.name} đợt ${formatDate(currentExam?.employeeExamPeriod?.examMonth)}, vui lòng xác nhận đăng ký tham gia trước thời hạn.`}
+                {`Bạn nằm trong danh sách ${(EXAM_TYPE_LABELS as any)[currentExam?.employeeExamPeriod?.examType?.code]} đợt ${formatDate(currentExam?.employeeExamPeriod?.examMonth)}, vui lòng xác nhận đăng ký tham gia trước thời hạn.`}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
                 <IconButton icon="calendar" size={20} />
@@ -98,6 +112,7 @@ const CurrentRoute = () => {
 const CurrentRouteTopic = () => {
     const currentExam = useData((state) => state.currentExam);
     const register = currentExam?.examRegistration?.registrationStatus;
+    const { formatDate } = useHelper();
     const registerTopic = 'notRegister';
     const { colors } = useTheme();
     return (
@@ -108,7 +123,7 @@ const CurrentRouteTopic = () => {
                 resizeMode="contain"
             />
             <Text variant="titleMedium" style={styles.title}>
-                Thi Nâng Bậc - Đợt 2/2025
+                {`${(EXAM_TYPE_LABELS as any)[currentExam?.employeeExamPeriod?.examType?.code]} (${currentExam?.employeeExamPeriod?.name})`}
             </Text>
             <Text variant="bodyMedium" style={{ color: colors.primary, marginBottom: 8 }}>
                 {registerTopic === "notRegister" ? 'Đăng Ký Đề tài' : 'Hoàn thành đăng ký'}
@@ -119,7 +134,7 @@ const CurrentRouteTopic = () => {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}>
                 <IconButton icon="calendar" size={20} />
-                <Text>{registerTopic === "notRegister" ? 'Thời Gian: 01/10/2025 - 05/10/2025' : 'Lịch thi: 10/10/2025'}</Text>
+                <Text>{`Thời Gian: ${formatDate(currentExam?.employeeExamPeriod?.registrationStartDate)} - ${formatDate(currentExam?.employeeExamPeriod?.registrationEndDate)}`}</Text>
             </View>
             <View style={{ gap: 10 }}>
                 <Button

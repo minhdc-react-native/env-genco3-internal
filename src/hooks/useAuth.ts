@@ -19,8 +19,6 @@ export const useAuth = () => {
     // các biến toàn ứng dụng
     const setUser = useData((state) => state.setUser);
     const setIndex = useTab((state) => state.setIndex);
-    const setRegister = useTab((state) => state.setRegister);
-    const setRegisterTopic = useTab((state) => state.setRegisterTopic);
     const getDataBegin = async () => {
         await api.get({
             link: `/employees/current-user/`,
@@ -39,11 +37,8 @@ export const useAuth = () => {
                 api.post({
                     link: `/auth/logout`,
                     callBack: async () => {
-                        await clearTokens();
                         router.replace("/(auth)/login");
                         setUser(null);
-                        setRegister("notRegister");
-                        setRegisterTopic("notRegister");
                         setIndex(0);
                     },
                     setLoading: (loading) => loading ? show("Đăng xuất...") : hide(),

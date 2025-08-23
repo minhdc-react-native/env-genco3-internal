@@ -6,12 +6,9 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { Appbar, Card, Chip, Text, useTheme } from "react-native-paper";
+import { Card, Chip, Text, useTheme } from "react-native-paper";
 
-interface IProg {
-    hideHeader?: boolean
-}
-export default function HistoryExams({ hideHeader = false }: IProg) {
+export default function HistoryExams() {
     const [data, setData] = useState<IDataBase[]>([]);
     const { formatDate } = useHelper();
     const [loading, setLoading] = useState<boolean>(false);
@@ -69,11 +66,11 @@ export default function HistoryExams({ hideHeader = false }: IProg) {
     return (
         <View style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
             {/* Header */}
-            {!hideHeader && <Appbar.Header>
+            {/* {<Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
                 <Appbar.Content title="Lịch sử thi" />
                 <Appbar.Action icon="magnify" onPress={() => { }} />
-            </Appbar.Header>}
+            </Appbar.Header>} */}
 
             <FlatList
                 data={data}
