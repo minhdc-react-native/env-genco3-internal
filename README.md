@@ -53,3 +53,14 @@ https://www.flaticon.com/
 
 https://snack.expo.dev/@react-native-paper/react-native-paper-example_v5
 https://callstack.github.io/react-native-paper/docs/components/ActivityIndicator
+
+# update lib expo
+yarn add expo@latest
+npx expo install --fix
+npx expo-doctor
+// kiểm tra các thư viện expo liên kết
+npx expo install --check
+
+# các gói khác expo:
+1. kiểm tra cũ chưa?
+yarn outdated

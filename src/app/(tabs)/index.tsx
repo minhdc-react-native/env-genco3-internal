@@ -71,7 +71,7 @@ const EmployeeInfo = () => {
 
       {/* Info Cards */}
       <View style={styles.row}>
-        <Card style={{ backgroundColor: colors.elevation.level2, flex: 1 }}>
+        <Card style={{ backgroundColor: colors.elevation.level2, flex: 1, height: 90 }}>
           <Card.Content>
             <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginBottom: 10 }}>
               <Avatar.Icon icon={"account"} style={{ backgroundColor: colors.background }} color={colors.primary} size={24} />
@@ -80,7 +80,7 @@ const EmployeeInfo = () => {
             <Text variant="bodyMedium" style={{ fontWeight: "bold", color: colors.onErrorContainer }}>{user?.positionName}</Text>
           </Card.Content>
         </Card>
-        <Card style={{ backgroundColor: colors.elevation.level2 }}>
+        <Card style={{ backgroundColor: colors.elevation.level2, height: 90 }}>
           <Card.Content>
             <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginBottom: 10 }}>
               <Avatar.Icon icon={"star"} style={{ backgroundColor: colors.background }} color={colors.primary} size={24} />
