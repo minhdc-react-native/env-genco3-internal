@@ -9,7 +9,6 @@ import { Card, Icon, useTheme } from "react-native-paper";
 
 export default function EmployeeInfo() {
     const user = useData((state) => state.user);
-    console.log('user>>', user);
     const { colors } = useTheme();
     const { formatDate } = useHelper();
     return (

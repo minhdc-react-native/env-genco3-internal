@@ -1,38 +1,44 @@
-import { router } from "expo-router";
+import { useHelper } from "@/hooks/useHelper";
+import { api } from "@/utils/epsApi";
+import { router, useLocalSearchParams } from "expo-router";
 import * as React from "react";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
-import { Appbar, Button, Chip, Divider, IconButton, Modal, Portal, Searchbar, Text, useTheme } from "react-native-paper";
-
-const notifications = [
-    {
-        id: "1",
-        title: "Mở đăng ký thi nâng bậc đợt 2/2025",
-        description: "Xin chào, chúng tôi đã mở",
-        date: "10:32",
-        file: "DanhSachThamGia",
-    },
-    {
-        id: "2",
-        title: "Kết quả thi giữ bậc T3/2024",
-        description: "Description",
-        date: "15/05/2024",
-        file: "KetQuaNangBac_03/2024",
-    },
-    {
-        id: "3",
-        title: "Đăng ký đào tạo thi giữ bậc T3/2024",
-        description: "Description",
-        date: "03/04/2024",
-        file: "DanhSachDeTai",
-    },
-    {
-        id: "4",
-        title: "Đăng ký đề tài thi giữ bậc T3/2024",
-        description: "Description",
-        date: "25/03/2024",
-        file: "DanhSachDeTai",
-    },
-];
+import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
+import { Appbar, Badge, Chip, Divider, IconButton, Modal, Portal, Text, useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+interface IData {
+    id: string;
+    [key: string]: any;
+}
+// const notifications = [
+//     {
+//         id: "1",
+//         title: "Mở đăng ký thi nâng bậc đợt 2/2025",
+//         description: "Xin chào, chúng tôi đã mở",
+//         date: "10:32",
+//         file: "DanhSachThamGia",
+//     },
+//     {
+//         id: "2",
+//         title: "Kết quả thi giữ bậc T3/2024",
+//         description: "Description",
+//         date: "15/05/2024",
+//         file: "KetQuaNangBac_03/2024",
+//     },
+//     {
+//         id: "3",
+//         title: "Đăng ký đào tạo thi giữ bậc T3/2024",
+//         description: "Description",
+//         date: "03/04/2024",
+//         file: "DanhSachDeTai",
+//     },
+//     {
+//         id: "4",
+//         title: "Đăng ký đề tài thi giữ bậc T3/2024",
+//         description: "Description",
+//         date: "25/03/2024",
+//         file: "DanhSachDeTai",
+//     },
+// ];
 const filters = {
     topic: [
         { id: 'topic1', value: 'Thi nâng bậc' }, { id: 'topic2', value: 'Thi giữ bậc' },
@@ -44,6 +50,8 @@ const filters = {
     ]
 }
 export default function NotificationScreen() {
+    const { limit } = useLocalSearchParams();
+    const insets = useSafeAreaInsets();
     const theme = useTheme();
     const [visible, setVisible] = React.useState(false);
     const { colors } = useTheme();
@@ -58,64 +66,88 @@ export default function NotificationScreen() {
         }
     }
     const [searchQuery, setSearchQuery] = React.useState("");
+    const [notifications, setNotifications] = React.useState<IData[]>([]);
 
     const filtered = notifications.filter((item) =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
+    const { formatDateText } = useHelper();
+    const onReadNotification = (item: IDataBase) => {
+        api.post({
+            link: `/notifications/read/${item.id}`,
+            data: null,
+            callBack: (res) => router.push("/screen/notification-detail")
+        });
+    }
     const renderItem = ({ item }: { item: typeof notifications[0] }) => (
         <Pressable
             style={({ pressed }) => [{
                 opacity: pressed ? 0.7 : 1,
                 paddingVertical: 12,
+                paddingHorizontal: 10,
                 borderBottomWidth: 0.5,
                 borderBottomColor: theme.colors.outlineVariant,
             }]}
-            onPress={() => router.replace("/screen/notification-detail")}
+            onPress={() => onReadNotification(item)}
         >
             {/* Header row */}
             <View
                 style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
                     alignItems: "flex-start",
+                    paddingBottom: 10
                 }}
             >
                 <Text variant="titleMedium" style={{ flex: 1, fontWeight: "600" }}>
                     {item.title}
                 </Text>
                 <Text variant="bodySmall" style={{ marginLeft: 8, color: theme.colors.onSurfaceVariant }}>
-                    {item.date}
+                    {formatDateText(item.createdDate)}
                 </Text>
             </View>
 
             {/* Description */}
             <Text variant="bodyMedium" style={{ marginTop: 2, color: theme.colors.onSurfaceVariant }}>
-                {item.description}
+                {item.body}
             </Text>
-
-            {/* File chip */}
-            {item.file && (
-                <Button
-                    mode="outlined"
-                    icon="file-document-outline"
-                    style={{ alignSelf: "flex-start", marginTop: 6 }}
-                >
-                    {item.file}
-                </Button>
-            )}
         </Pressable>
     );
+    const [infoParam, setInfoParam] = React.useState(
+        { totalItems: 0, totalPages: 3, itemCount: 5, currentPage: 1 })
 
+    const [typeLoading, setTypeLoading] = React.useState<0 | 1 | 2>(0); // 1:refresh, 2:loadMore, 0:none
+
+    const getData = async (refresh?: boolean) => {
+        if (typeLoading !== 0 || (!refresh && infoParam.currentPage === infoParam.totalPages)) return;
+        const newCurrentPage = !!refresh ? 1 : infoParam.currentPage + 1;
+        setTypeLoading(!!refresh ? 1 : 2);
+        api.get({
+            link: `/notifications?page=${!!refresh ? 1 : (newCurrentPage)}&limit=${infoParam.itemCount}`,
+            callBack: (res) => {
+                const data = res.returnData.items;
+                const meta = res.returnData.meta;
+                setNotifications(prev => (!!refresh ? data : [...prev, ...data]));
+                setInfoParam(prev => ({ ...prev, ...meta, currentPage: newCurrentPage }));
+                setTypeLoading(0);
+            }
+        })
+    };
+
+    React.useEffect(() => {
+        getData(true);
+    }, [])
     return (
-        <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <View style={{ flex: 1, backgroundColor: theme.colors.background, marginBottom: insets.bottom }}>
             {/* Appbar */}
             <Appbar.Header mode="center-aligned">
                 <Appbar.BackAction onPress={() => router.back()} />
-                <Appbar.Content title="Thông báo" />
-            </Appbar.Header>
+                <View style={{ flexDirection: "row", gap: 10, justifyContent: "center" }}>
+                    <Text variant="headlineMedium">{`Thông báo`}</Text>
+                    <Badge style={{ position: "absolute", top: 0, right: -25 }}>{infoParam.totalItems > 99 ? '+99' : infoParam.totalItems}</Badge>
+                </View>
 
-            <View style={{ flexDirection: "row", alignItems: "center", marginRight: 10 }}>
+            </Appbar.Header>
+            <Divider />
+            {/* <View style={{ flexDirection: "row", alignItems: "center", marginRight: 10 }}>
                 <Searchbar
                     placeholder="Tìm nội dung"
                     value={searchQuery}
@@ -123,15 +155,22 @@ export default function NotificationScreen() {
                     style={{ margin: 10, borderRadius: 20, flex: 1, backgroundColor: colors.elevation.level1, borderWidth: 0.2, borderColor: colors.backdrop }}
                 />
                 <Appbar.Action icon="filter-variant" onPress={showFilter} />
-            </View>
-
+            </View> */}
 
             {/* List */}
             <FlatList
                 data={filtered}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, idx) => `${item.id}-${idx}`}
                 renderItem={renderItem}
                 contentContainerStyle={{ paddingHorizontal: 12 }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={typeLoading === 1}
+                        onRefresh={() => getData(true)}
+                    />
+                }
+                onEndReached={() => getData()}
+                onEndReachedThreshold={0.5}
             />
 
             <Portal>

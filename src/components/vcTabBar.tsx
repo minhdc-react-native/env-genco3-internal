@@ -68,7 +68,7 @@ export const VcTabBar = ({ value, data, onPress, style }: IProgs) => {
                                 tabLayouts.current[item.id] = { x, width };
                             }}
                         >
-                            <Text numberOfLines={1} style={[styles.tabText,
+                            <Text numberOfLines={1} variant="titleSmall" style={[styles.tabText,
                             isFocused && [styles.activeTabText, { color: colors.background }]]}>
                                 {item.value}
                             </Text>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         flexShrink: 1,
-        fontSize: 14,
+        // fontSize: 18,
         paddingVertical: 5,
         color: '#999'
     },

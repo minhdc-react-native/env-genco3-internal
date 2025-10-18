@@ -1,7 +1,15 @@
+import { useLoading } from "@/components/dialog/loadingProvider";
+import { useToast } from "@/components/dialog/useToast";
+import FormWrapper from "@/components/formWrapper";
+import VcSelectList from "@/components/vcSelectList";
+import { useHelper } from "@/hooks/useHelper";
+import { useData } from "@/hooks/zustand/useData";
+import { api } from "@/utils/epsApi";
 import { router } from "expo-router";
-import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Appbar, List, useTheme } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Appbar, Button, TextInput, useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const topics = [
     { id: "DT-001", title: "Lập hồ sơ chuẩn bị và chỉ huy thực hiện công tác gia công trục, ống lót bộ phân ly, NMNĐ Vĩnh Tân 2" },
@@ -21,33 +29,71 @@ const topics = [
     { id: "DT-015", title: "Xây dựng kế hoạch bảo dưỡng lớn định kỳ tổ máy S2, NMNĐ Vĩnh Tân 4" },
     { id: "DT-016", title: "Thí nghiệm hiệu chỉnh hệ thống điều khiển khói bụi ESP, NMNĐ Duyên Hải 1" },
 ];
-
+interface IDataTopic {
+    title: string;
+    areaId: string | number | null;
+    description: string;
+}
 const RegisterTopic = () => {
     const { colors } = useTheme();
+    const { show, hide } = useLoading();
+    const { showToast } = useToast();
+    const insets = useSafeAreaInsets();
+    const currentExam = useData((state) => state.currentExam);
+    const [dataTopic, setDataTopic] = useState<IDataTopic>({ title: '', areaId: null, description: '' })
+    const [areas, setAreas] = useState<IDataBase[]>([]);
+    const { isNotEmpty } = useHelper();
+
+    const onRegiterTopic = () => {
+        if (!isNotEmpty(dataTopic.title) || !isNotEmpty(dataTopic.areaId) || !isNotEmpty(dataTopic.description)) {
+            showToast('Bạn chưa nhập đủ số liệu!', { type: "warning" })
+            return;
+        }
+        api.post({
+            link: `/topics/exam-periods/${currentExam?.employeeExamPeriod.id}/register`,
+            data: dataTopic,
+            callBack: (res) => {
+                showToast('Đã đăng ký đề tài!', { type: "success" });
+                router.back();
+            },
+            setLoading: (loading) => loading ? show() : hide()
+        })
+    }
+
+    useEffect(() => {
+        api.get({
+            link: `/areas`,
+            callBack: (res) => setAreas(res.returnData || [])
+        })
+    }, [])
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginBottom: insets.bottom }}>
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => router.back()} />
-                <Appbar.Content title="Chọn Đề Tài" />
+                <Appbar.Content title={`Đăng ký: ${currentExam?.employeeExamPeriod?.name}`} />
             </Appbar.Header>
-
-            <FlatList
-                data={topics}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <List.Item
-                        title={item.id}
-                        description={item.title}
-                        descriptionNumberOfLines={2}
-                        onPress={() => router.replace({
-                            pathname: "/screen/register-topic-detail",
-                            params: { sTopic: JSON.stringify(item) }
-                        })}
-                        style={[styles.listItem, { backgroundColor: colors.background }]}
-                    />
-                )}
-                ListFooterComponent={<View style={{ height: 100 }} />}
-            />
+            <FormWrapper style={{ flex: 1, padding: 20, gap: 10 }}>
+                <TextInput
+                    label="Tên đề tài"
+                    value={dataTopic.title}
+                    onChangeText={(value) => setDataTopic(prev => ({ ...prev, title: value }))}
+                    mode="outlined"
+                    style={styles.input}
+                />
+                <VcSelectList label="Chọn lĩnh vực" fDisplay={{ fValue: 'name' }}
+                    value={dataTopic.areaId || ''} data={areas}
+                    onChange={(item) => setDataTopic(prev => ({ ...prev, areaId: item?.id.toString() || null }))} />
+                <TextInput
+                    label="Mô tả chi tiết"
+                    value={dataTopic.description}
+                    onChangeText={(value) => setDataTopic(prev => ({ ...prev, description: value }))}
+                    mode="outlined" multiline
+                    style={[styles.input, { height: 350 }]}
+                />
+                <Button mode="contained" onPress={onRegiterTopic}>
+                    Cập nhật
+                </Button>
+            </FormWrapper>
         </View>
     );
 };
@@ -56,6 +102,10 @@ const styles = StyleSheet.create({
     listItem: {
         borderBottomWidth: 1,
         borderBottomColor: "#eee",
+    },
+    input: {
+        marginBottom: 12,
+        backgroundColor: "#fff",
     },
 });
 

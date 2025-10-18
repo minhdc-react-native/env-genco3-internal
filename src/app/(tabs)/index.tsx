@@ -8,7 +8,7 @@ import { api } from '@/utils/epsApi';
 import { AntDesign } from '@expo/vector-icons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Avatar, Badge, Button, Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 const sizeLogo = { width: 874, height: 537 }
@@ -20,7 +20,7 @@ const EmployeeInfo = () => {
   const currentExam = useData((state) => state.currentExam);
   const setCurrentExam = useData((state) => state.setCurrentExam);
   const { logout } = useAuth();
-
+  const [totalUnread, setTotalUnread] = useState<number>(0);
   const onGetCurrentExam = useCallback(() => {
     api.get({
       link: `/exams/employee/${user?.id}/exam-periods`,
@@ -29,6 +29,7 @@ const EmployeeInfo = () => {
           const dataExams: any[] = res.returnData;
           const exam = dataExams.find(item => item.employeeExamPeriod.status === EXAM_STATUS.REGISTRATION);
           setCurrentExam(exam ? exam : null);
+          // setCurrentExam(exam ? exam : DATE_TEST.examTest);
         }
       },
       setLoading: setLoading
@@ -41,6 +42,12 @@ const EmployeeInfo = () => {
     }, [onGetCurrentExam])
   )
 
+  useEffect(() => {
+    api.get({
+      link: `/notifications/global`,
+      callBack: (res) => setTotalUnread(res.TotalUnread || 0)
+    })
+  }, [])
   return (
     <>
       {/* Header */}
@@ -51,8 +58,8 @@ const EmployeeInfo = () => {
         />
         <Appbar.Content title="" />
         <View style={{ flexDirection: "row" }}>
-          <Appbar.Action icon="bell-outline" onPress={() => router.navigate("/screen/notifications")} />
-          {currentExam && <Badge size={15} style={{ position: "absolute", top: 10, right: 10 }} >1</Badge>}
+          <Appbar.Action icon="bell-outline" onPress={() => router.navigate({ pathname: "/screen/notifications", params: { limit: totalUnread } })} />
+          {totalUnread !== 0 && <Badge size={15} style={{ position: "absolute", top: 10, right: 10 }} >{totalUnread}</Badge>}
         </View>
         <Appbar.Action icon={() => <AntDesign name="logout" size={24} color={colors.primary} />} onPress={logout} />
       </Appbar.Header>

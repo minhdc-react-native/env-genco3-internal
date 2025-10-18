@@ -20,6 +20,7 @@ export default function Login() {
     const [secureText, setSecureText] = React.useState(true);
     const [loginInfo, setLoginInfo] = React.useState<ILogin>({ userName: '', password: '', remember: false });
     const { showToast } = useToast();
+
     const { login } = useAuth();
     const onLogin = () => {
         try {
